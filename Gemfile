@@ -17,6 +17,7 @@ gem 'puma', '~> 4.1'
 # MongoDB
 gem 'bson_ext'
 gem 'mongoid'
+gem 'mongoid_paranoia'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
