@@ -6,20 +6,20 @@ RSpec.describe Asset, type: :model do
   let(:asset)      { user.assets.build(valid_attr) }
 
   describe "validations" do
-    it 'asset should not be valid without parent' do
+    it 'does not create record without parent' do
       expect { described_class.create(valid_attr) }.to raise_exception(Mongoid::Errors::NoParent)
     end
 
-    it 'asset should be valid' do
+    it 'is a valid asset' do
       expect(asset).to be_valid
     end
 
-    it 'title should be present' do
+    it 'does not allow empty / blank title' do
       asset.title = '     '
       expect(asset).not_to be_valid
     end
 
-    it 'title should not be too long' do
+    it 'does not allow long character for title' do
       asset.title = 'a' * 256
       expect(asset).not_to be_valid
     end

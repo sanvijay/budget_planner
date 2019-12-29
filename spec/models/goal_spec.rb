@@ -18,7 +18,7 @@ RSpec.describe Goal, type: :model do
       expect { described_class.create(valid_attr) }.to raise_exception(Mongoid::Errors::NoParent)
     end
 
-    it 'goal should be valid' do
+    it 'is a valid goal' do
       expect(goal).to be_valid
     end
 

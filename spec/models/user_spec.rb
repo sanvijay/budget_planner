@@ -4,21 +4,21 @@ RSpec.describe User, type: :model do
   let(:user) { described_class.new(email: "example_user@example.com") }
 
   describe "validations" do
-    it 'user should be valid' do
+    it 'is a valid user' do
       expect(user).to be_valid
     end
 
-    it 'email should be present' do
+    it 'is invalid with empty email string' do
       user.email = '     '
       expect(user).not_to be_valid
     end
 
-    it 'email should not be too long' do
+    it 'does not allow long email > 256 characters' do
       user.email = 'a' * 244 + '@example.com'
       expect(user).not_to be_valid
     end
 
-    it "email validation should accept valid addresses" do
+    it "accepts valid format of email" do
       valid_addresses = %w[user@example.com USER@foo.COM A_US-ER@foo.bar.org
                            first.last@foo.jp alice+bob@baz.cn]
 
@@ -28,7 +28,7 @@ RSpec.describe User, type: :model do
       end
     end
 
-    it "email validation should reject invalid addresses" do
+    it "does not allow invalid format of email" do
       invalid_addresses = %w[user@example,com user_at_foo.org user.name@example.
                              foo@bar_baz.com foo@bar+baz.com foo@bar..com]
 
@@ -38,14 +38,14 @@ RSpec.describe User, type: :model do
       end
     end
 
-    it "email addresses should be unique" do
+    it "does not allow duplicate user with same email" do
       duplicate_user = user.dup
       duplicate_user.email = user.email.upcase
       user.save
       expect(duplicate_user).not_to be_valid
     end
 
-    it "email addresses should be saved as lower-case" do
+    it "saves the email addresses as lower-case" do
       mixed_case_email = "Foo@ExAMPle.CoM"
       user.email = mixed_case_email
       user.save
