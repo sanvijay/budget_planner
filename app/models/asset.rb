@@ -15,7 +15,6 @@ class Asset
 
   private
 
-  # Converts email to all lower-case.
   def set_value_precision
     self.value = value.round(2)
   end

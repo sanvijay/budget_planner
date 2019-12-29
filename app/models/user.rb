@@ -5,6 +5,7 @@ class User
 
   field :email, type: String
 
+  embeds_many :goals
   embeds_many :assets
 
   # Validation for email
