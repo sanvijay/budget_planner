@@ -4,13 +4,8 @@ RSpec.describe AssetsController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Asset. As you add validations to Asset, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) do
-    { title: "House", value: 1000 }
-  end
-
-  let(:invalid_attributes) do
-    { title: "  ", value: 'test' }
-  end
+  let(:valid_attributes)   { { title: "House", value: 1000 } }
+  let(:invalid_attributes) { { title: "     ", value: "test" } }
 
   let(:user)       { User.new(email: "sample@example.com") }
   let(:asset)      { user.assets.build(valid_attributes) }

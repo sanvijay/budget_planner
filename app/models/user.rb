@@ -7,6 +7,7 @@ class User
 
   embeds_many :goals
   embeds_many :assets
+  embeds_many :categories
 
   # Validation for email
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i.freeze
