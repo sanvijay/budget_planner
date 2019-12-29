@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 RSpec.describe UsersController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # User. As you add validations to User, be sure to
@@ -19,7 +20,7 @@ RSpec.describe UsersController, type: :controller do
   describe "GET #show" do
     it "returns a success response" do
       user = User.create! valid_attributes
-      get :show, params: { id: user.to_param }, session: valid_session
+      get :show, params: { user_id: user.to_param }, session: valid_session
       expect(response).to be_successful
     end
   end
@@ -53,7 +54,7 @@ RSpec.describe UsersController, type: :controller do
     it "destroys the requested user" do
       user = User.create! valid_attributes
       expect do
-        delete :destroy, params: { id: user.to_param }, session: valid_session
+        delete :destroy, params: { user_id: user.to_param }, session: valid_session
       end.to change(User, :count).by(-1)
     end
   end
