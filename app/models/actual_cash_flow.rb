@@ -1,0 +1,1 @@
+class ActualCashFlow < CashFlow; end

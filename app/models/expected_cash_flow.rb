@@ -1,0 +1,1 @@
+class ExpectedCashFlow < CashFlow; end

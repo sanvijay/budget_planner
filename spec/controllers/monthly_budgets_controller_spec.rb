@@ -4,7 +4,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # monthly_budget. As you add validations to monthly_budget, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) { { month: Date.today } }
+  let(:valid_attributes) { { month: Date.today.to_s } }
 
   let(:invalid_attributes) { { month: "" } }
 
@@ -32,7 +32,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
 
       slice_keys = %w[month]
       validate_attr = response_body[0].slice(*slice_keys)
-      expect(validate_attr).to eq("month" => "2019-12-29")
+      expect(validate_attr).to eq("month" => Date.today.to_s)
     end
   end
 
@@ -45,7 +45,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
       response_body = JSON.parse(response.body)
       slice_keys = %w[month]
       validate_attr = response_body.slice(*slice_keys)
-      expect(validate_attr).to eq("month" => "2019-12-29")
+      expect(validate_attr).to eq("month" => Date.today.to_s)
     end
   end
 

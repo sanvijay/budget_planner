@@ -48,8 +48,8 @@ RSpec.describe GoalsController, type: :controller do
       validate_attr = response_body[0].slice(*slice_keys)
       expect(validate_attr).to eq(
         "description" => "Bike",
-        "end_date" => "2019-12-30",
-        "start_date" => "2019-12-29",
+        "end_date" => (Date.today + 1).to_s,
+        "start_date" => Date.today.to_s,
         "target" => 1000.0
       )
     end
@@ -66,8 +66,8 @@ RSpec.describe GoalsController, type: :controller do
       validate_attr = response_body.slice(*slice_keys)
       expect(validate_attr).to eq(
         "description" => "Bike",
-        "end_date" => "2019-12-30",
-        "start_date" => "2019-12-29",
+        "end_date" => (Date.today + 1).to_s,
+        "start_date" => Date.today.to_s,
         "target" => 1000.0
       )
     end
