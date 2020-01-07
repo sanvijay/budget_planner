@@ -6,6 +6,12 @@ class UsersController < ApplicationController
     render json: @user
   end
 
+  def login
+    user_id = JSON.parse(params.keys.first)["email"]
+    @user = User.find(user_id)
+    render json: { user: @user.to_param, token: 'test' }
+  end
+
   # POST /users
   def create
     @user = User.new(user_params)

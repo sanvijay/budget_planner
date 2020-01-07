@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  
+  match 'login', to: 'users#login', via: [:post]
+
   resources :users, only: [:show, :create, :destroy], param: :user_id do
     member do
       resources :assets, :goals, :categories
