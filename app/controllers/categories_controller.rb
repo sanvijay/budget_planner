@@ -4,9 +4,7 @@ class CategoriesController < ApplicationController
 
   # GET /categories
   def index
-    @categories = @user.categories
-
-    render json: @categories
+    render json: grouped_categories
   end
 
   # GET /categories/1
@@ -53,5 +51,15 @@ class CategoriesController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def category_params
     params.require(:category).permit(:type, :title)
+  end
+
+  def grouped_categories
+    Category::SUPER_CATEGORY.values
+    results = Category::SUPER_CATEGORY.values.map { |e| [e, []] }.to_h
+    @user.categories.each do |category|
+      results[category.type] ||= []
+      results[category.type].push(category.title)
+    end
+    results
   end
 end

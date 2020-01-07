@@ -29,6 +29,12 @@ RSpec.describe ActualCashFlow, type: :model do
         expect(actual_cash_flow).not_to be_valid
       end
 
+      it "does not allow duplicate category" do
+        duplicate_actual_cash_flow = monthly_budget.actual_cash_flows.build(category_id: category.id, value: 1000)
+        actual_cash_flow.save
+        expect(duplicate_actual_cash_flow).not_to be_valid
+      end
+
       it 'does not allow non-existing category of this user' do
         new_category = User.create(email: "sample2@example.com").categories.create(title: "House Rent", type: "Expense")
         expect(new_category.id).not_to eq category.id

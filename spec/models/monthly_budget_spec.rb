@@ -15,6 +15,15 @@ RSpec.describe MonthlyBudget, type: :model do
       expect(monthly_budget).to be_valid
     end
 
+    context "with scope" do
+      before { monthly_budget.save! }
+
+      it 'returns the correct records for the scope of_the_year' do
+        expect(described_class.of_the_year(Date.today.year).count).to eq 1
+        expect(described_class.of_the_year(Date.today.year + 1).count).to eq 0
+      end
+    end
+
     context "with month" do
       it 'does not allow empty value' do
         monthly_budget.month = '     '

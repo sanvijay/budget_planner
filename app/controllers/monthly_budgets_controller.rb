@@ -4,9 +4,11 @@ class MonthlyBudgetsController < ApplicationController
 
   # GET /monthly_budgets
   def index
-    @monthly_budgets = @user.monthly_budgets
-
-    render json: @monthly_budgets
+    if params[:year].blank?
+      render json: { message: "Params: year is required" }, status: :bad_request
+    else
+      render json: yearly_budgets
+    end
   end
 
   # GET /monthly_budgets/1
@@ -39,5 +41,32 @@ class MonthlyBudgetsController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def monthly_budget_params
     params.require(:monthly_budget).permit(:month)
+  end
+
+  def method_name
+    ((((@date[month] ||= {})[day] ||= {})[hours] ||= {})[min] ||= {})[sec] = 1
+  end
+
+  def yearly_budgets
+    yearly_budgets = @user.monthly_budgets.of_the_year(params[:year].to_i)
+
+    @results = {}
+    yearly_budgets.each do |budget|
+      budget.expected_cash_flows.each do |cf|
+        deep_hash_budgets(budget, cf)
+      end
+    end
+
+    @results
+  end
+
+  def deep_hash_budgets(budget, cash_flow)
+    (
+      (
+        (
+          @results[cash_flow.category.type] ||= {}
+        )[cash_flow.category.title] ||= {}
+      )[budget.month.year] ||= {}
+    )[budget.month.month] ||= { "value": cash_flow.value }
   end
 end
