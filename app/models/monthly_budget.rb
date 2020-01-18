@@ -15,4 +15,15 @@ class MonthlyBudget
       :month.lte => Date.new(year + 1, 1, 1)
     )
   }
+
+  scope :of_the_month, lambda { |date|
+    where(
+      :month.gte => date.beginning_of_month,
+      :month.lte => date.end_of_month
+    )
+  }
+
+  def to_param
+    "#{format('%<digit>02d', digit: month.month)}#{month.year}"
+  end
 end

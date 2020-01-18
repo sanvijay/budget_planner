@@ -17,7 +17,9 @@ class CategoriesController < ApplicationController
     @category = @user.categories.build(category_params)
 
     if @category.save
-      render json: @category, status: :created
+      render json: {
+        id: @category.to_param, title: @category.title, type: @category.type
+      }, status: :created
     else
       render json: @category.errors, status: :unprocessable_entity
     end
@@ -58,7 +60,9 @@ class CategoriesController < ApplicationController
     results = Category::SUPER_CATEGORY.values.map { |e| [e, []] }.to_h
     @user.categories.each do |category|
       results[category.type] ||= []
-      results[category.type].push(category.title)
+      results[category.type].push(
+        id: category.to_param, title: category.title, type: category.type
+      )
     end
     results
   end

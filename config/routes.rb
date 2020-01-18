@@ -5,10 +5,9 @@ Rails.application.routes.draw do
     member do
       resources :assets, :goals, :categories
 
-      resources :monthly_budgets, except: [:update, :destroy] do
+      resources :monthly_budgets, except: [:show, :update, :destroy] do
         resources :cash_flows, only: [:index]
-        resources :cash_flows, only: [:show], path: 'actual_cash_flows'
-        resources :cash_flows, only: [:create, :show, :update, :destroy], path: 'expected_cash_flows'
+        resources :cash_flows, only: [:create], path: 'expected_cash_flows'
       end
     end
   end

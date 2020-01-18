@@ -11,11 +11,6 @@ class MonthlyBudgetsController < ApplicationController
     end
   end
 
-  # GET /monthly_budgets/1
-  def show
-    render json: @monthly_budget
-  end
-
   # POST /monthly_budgets
   def create
     @monthly_budget = @user.monthly_budgets.build(monthly_budget_params)
@@ -43,10 +38,6 @@ class MonthlyBudgetsController < ApplicationController
     params.require(:monthly_budget).permit(:month)
   end
 
-  def method_name
-    ((((@date[month] ||= {})[day] ||= {})[hours] ||= {})[min] ||= {})[sec] = 1
-  end
-
   def yearly_budgets
     yearly_budgets = @user.monthly_budgets.of_the_year(params[:year].to_i)
 
@@ -65,7 +56,7 @@ class MonthlyBudgetsController < ApplicationController
       (
         (
           @results[cash_flow.category.type] ||= {}
-        )[cash_flow.category.title] ||= {}
+        )[cash_flow.category.id] ||= {}
       )[budget.month.year] ||= {}
     )[budget.month.month] ||= { "value": cash_flow.value }
   end

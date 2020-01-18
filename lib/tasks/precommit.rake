@@ -15,7 +15,7 @@ if Rails.env.development? || Rails.env.test?
 
     desc "precommit checks to make sure it's okay to push"
     task :check do
-      system({ "COVERAGE" => "on" }, "bundle exec rake spec")
+      system({ "COVERAGE" => "on" }, "bundle exec rspec")
       Rake::Task["precommit:coverage_percent"].invoke
 
       system("bundle exec bundle-audit")

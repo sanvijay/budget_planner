@@ -1,7 +1,6 @@
 class CashFlowsController < ApplicationController
   before_action :set_user, :set_monthly_budget
-  before_action :set_actual_cash_flows, only: %i[show]
-  before_action :set_expected_cash_flows, only: %i[update destroy]
+  before_action :set_category, :set_expected_cash_flows, only: %i[create]
 
   # GET /cash_flows
   def index
@@ -10,43 +9,19 @@ class CashFlowsController < ApplicationController
     render json: @cash_flows
   end
 
-  # This is only for actual cashflow
-  def show
-    if @actual_cash_flow
-      render json: @actual_cash_flow
-    else
-      render json: { message: "No record found." }, status: :not_found
-    end
-  end
-
   # This is only for expected cashflow
+  # If record is already there, update it.
   def create
-    @cash_flow = @monthly_budget.expected_cash_flows.build(cash_flow_params)
+    @expected_cash_flow ||= @monthly_budget.expected_cash_flows.build(
+      category_id: @category.id
+    )
 
-    if @cash_flow.save
-      render json: @cash_flow, status: :created
-    else
-      render json: @cash_flow.errors, status: :unprocessable_entity
-    end
-  end
+    @expected_cash_flow.value = cash_flow_params[:value]
 
-  # This is only for expected cashflow
-  def update
-    if @expected_cash_flow.nil?
-      render json: { message: "No record found." }, status: :not_found
-    elsif @expected_cash_flow.update(cash_flow_params)
-      render json: @expected_cash_flow
+    if @expected_cash_flow.save
+      render json: @expected_cash_flow, status: :created
     else
       render json: @expected_cash_flow.errors, status: :unprocessable_entity
-    end
-  end
-
-  # This is only for expected cashflow
-  def destroy
-    if @expected_cash_flow.nil?
-      render json: { message: "No record found." }, status: :not_found
-    else
-      @expected_cash_flow.destroy
     end
   end
 
@@ -57,22 +32,39 @@ class CashFlowsController < ApplicationController
   end
 
   def set_monthly_budget
-    @monthly_budget = @user.monthly_budgets.find(params[:monthly_budget_id])
+    if (date = parse_date)
+      @monthly_budget = @user.monthly_budgets.of_the_month(date).first ||
+                        @user.monthly_budgets.create(month: date)
+    else
+      render json: {
+        message: "Params: monthly_budget_id should be of format MMYYYY"
+      }, status: :bad_request
+    end
   end
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_actual_cash_flows
-    @actual_cash_flow = @monthly_budget.actual_cash_flows.find(params[:id])
+  def parse_date
+    return unless (match = params[:monthly_budget_id].match(/^(\d{2})(\d{4})$/))
+
+    month, year = match.captures
+    Date.new(year.to_i, month.to_i, 1)
+  end
+
+  def set_category
+    @category = @user.categories.find(cash_flow_params[:category_id])
+    return if @category
+
+    render json: { message: "category_id is mandatory" }, status: :bad_request
   end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_expected_cash_flows
-    @expected_cash_flow = @monthly_budget.expected_cash_flows.find(params[:id])
+    @expected_cash_flow = @monthly_budget.expected_cash_flows.find_by(
+      category_id: @category.id
+    )
   end
 
-  # Only allow a trusted parameter "white list" through.
   def cash_flow_params
-    params.require(:cash_flow).permit(:category_id, :value)
+    params[:cash_flow]
   end
 
   def calculate_all_cash_flows

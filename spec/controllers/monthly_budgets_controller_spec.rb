@@ -37,20 +37,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
       get :index, params: { user_id: user.to_param, year: Date.today.year }, session: valid_session
 
       response_body = JSON.parse(response.body)
-      expect(response_body).to eq("Expense" => { "House Rent" => { Date.today.year.to_s => { Date.today.month.to_s => { "value" => 1000.0 } } } })
-    end
-  end
-
-  describe "GET #show" do
-    it "returns a success response" do
-      monthly_budget.save!
-      get :show, params: { user_id: user.to_param, id: monthly_budget.to_param }, session: valid_session
-      expect(response).to be_successful
-
-      response_body = JSON.parse(response.body)
-      slice_keys = %w[month]
-      validate_attr = response_body.slice(*slice_keys)
-      expect(validate_attr).to eq("month" => Date.today.to_s)
+      expect(response_body).to eq("Expense" => { category.to_param => { Date.today.year.to_s => { Date.today.month.to_s => { "value" => 1000.0 } } } })
     end
   end
 

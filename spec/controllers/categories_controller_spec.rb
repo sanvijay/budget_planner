@@ -29,7 +29,7 @@ RSpec.describe CategoriesController, type: :controller do
       response_body = JSON.parse(response.body)
       expect(response_body).to eq(
         "Income" => [],
-        "Expense" => ["House Rent"],
+        "Expense" => [{ "id" => category.to_param, "title" => category.title, "type" => category.type }],
         "EMI" => [],
         "EquityInvestment" => [],
         "DebtInvestment" => []
@@ -66,6 +66,14 @@ RSpec.describe CategoriesController, type: :controller do
         post :create, params: { user_id: user.to_param, category: valid_attributes }, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
+      end
+
+      it "returns the category hash in response" do
+        post :create, params: { user_id: user.to_param, category: valid_attributes }, session: valid_session
+
+        response_body = JSON.parse(response.body)
+        expect(response_body["title"]).to eq valid_attributes[:title]
+        expect(response_body["type"]).to eq valid_attributes[:type]
       end
     end
 

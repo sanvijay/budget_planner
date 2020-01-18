@@ -22,6 +22,11 @@ RSpec.describe MonthlyBudget, type: :model do
         expect(described_class.of_the_year(Date.today.year).count).to eq 1
         expect(described_class.of_the_year(Date.today.year + 1).count).to eq 0
       end
+
+      it 'returns the correct records for the scope of_the_month' do
+        expect(described_class.of_the_month(Date.today).count).to eq 1
+        expect(described_class.of_the_month(Date.today + 31.days).count).to eq 0
+      end
     end
 
     context "with month" do
@@ -53,6 +58,18 @@ RSpec.describe MonthlyBudget, type: :model do
 
         monthly_budget.save
         expect(duplicate_category).to be_valid
+      end
+    end
+
+    describe "#to_param" do
+      it "prepend 0 if month is single digit" do
+        monthly_budget = described_class.new(month: Date.new(1992, 3, 1))
+        expect(monthly_budget.to_param).to eq '031992'
+      end
+
+      it "leaves the month as it is if month is 2 digit" do
+        monthly_budget = described_class.new(month: Date.new(1992, 12, 1))
+        expect(monthly_budget.to_param).to eq '121992'
       end
     end
   end

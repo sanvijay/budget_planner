@@ -29,6 +29,14 @@ RSpec.describe CashFlowsController, type: :controller do
       expect(response).to be_successful
     end
 
+    it "returns non-success response" do
+      get :index, params: { user_id: user.to_param, monthly_budget_id: 'test' }, session: valid_session
+      expect(response).not_to be_successful
+
+      response_body = JSON.parse(response.body)
+      expect(response_body['message']).to eq 'Params: monthly_budget_id should be of format MMYYYY'
+    end
+
     it "returns a JSON response with expected cash_flows" do
       get :index, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, filter: 'expected' }, session: valid_session
 
@@ -76,31 +84,6 @@ RSpec.describe CashFlowsController, type: :controller do
     end
   end
 
-  describe "GET #show" do
-    before { actual_cash_flow.save! }
-
-    it "returns a success response" do
-      get :show, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: actual_cash_flow.to_param }, session: valid_session
-      expect(response).to be_successful
-    end
-
-    it "returns a JSON response of the actual cashflows" do
-      get :show, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: actual_cash_flow.to_param }, session: valid_session
-
-      response_body = JSON.parse(response.body)
-      cat_obj_id = BSON::ObjectId.from_string response_body["category_id"]["$oid"]
-      expect(cat_obj_id).to eq valid_attributes[:category_id]
-      expect(response_body["value"]).to eq valid_attributes[:value]
-    end
-
-    it "does not returns a success response if we send non actual cashflows" do
-      expected_cash_flow.save!
-      get :show, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: expected_cash_flow.to_param }, session: valid_session
-
-      expect(response).not_to be_successful
-    end
-  end
-
   describe "POST #create" do
     before { monthly_budget.save! }
 
@@ -115,86 +98,30 @@ RSpec.describe CashFlowsController, type: :controller do
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
+
+      it "creates the monthly_budget if it is not already present" do
+        before_count = MonthlyBudget.count
+        post :create, params: { user_id: user.to_param, monthly_budget_id: '031992', cash_flow: valid_attributes }, session: valid_session
+        after_count = MonthlyBudget.count
+
+        expect(after_count - before_count).to eq 1
+      end
     end
 
     context "with invalid params" do
+      it "returns non-success response" do
+        post :create, params: { user_id: user.to_param, monthly_budget_id: 'test', cash_flow: valid_attributes }, session: valid_session
+        expect(response).not_to be_successful
+
+        response_body = JSON.parse(response.body)
+        expect(response_body['message']).to eq 'Params: monthly_budget_id should be of format MMYYYY'
+      end
+
       it "renders a JSON response with errors for the new cash_flow" do
         post :create, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, cash_flow: invalid_attributes }, session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:bad_request)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
-    end
-  end
-
-  describe "PUT #update" do
-    before { expected_cash_flow.save! }
-
-    context "with valid params" do
-      let(:new_attributes) { { category_id: category.id, value: 2000 } }
-
-      it "updates the requested expected_cash_flow" do
-        put :update, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: expected_cash_flow.to_param, cash_flow: new_attributes }, session: valid_session
-        expected_cash_flow.reload
-        expect(expected_cash_flow.category_id).to eq new_attributes[:category_id]
-        expect(expected_cash_flow.value).to eq new_attributes[:value]
-      end
-
-      it "renders a JSON response with the expected_cash_flow" do
-        put :update, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: expected_cash_flow.to_param, cash_flow: new_attributes }, session: valid_session
-        expect(response).to have_http_status(:ok)
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
-    end
-
-    context "with invalid params" do
-      it "renders a JSON response with errors for the expected_cash_flow" do
-        put :update, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: expected_cash_flow.to_param, cash_flow: invalid_attributes }, session: valid_session
-        expected_cash_flow.reload
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(expected_cash_flow.category_id).to eq valid_attributes[:category_id]
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
-
-      it "renders a JSON response with errors for the actual_cash_flow" do
-        actual_cash_flow.save!
-        put :update, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: actual_cash_flow.to_param, cash_flow: invalid_attributes }, session: valid_session
-        actual_cash_flow.reload
-        expect(response).to have_http_status(:not_found)
-        expect(actual_cash_flow.category_id).to eq valid_attributes[:category_id]
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    before { expected_cash_flow.save! }
-
-    it "destroys the requested cash_flow" do
-      before_count = monthly_budget.expected_cash_flows.count
-      delete :destroy, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: expected_cash_flow.to_param }, session: valid_session
-      monthly_budget.reload
-      after_count = monthly_budget.expected_cash_flows.count
-
-      expect(after_count - before_count).to eq(-1)
-    end
-
-    it "does not destroys the requested actual cash_flow" do
-      actual_cash_flow.save!
-
-      before_count = monthly_budget.expected_cash_flows.count
-      delete :destroy, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: actual_cash_flow.to_param }, session: valid_session
-      user.reload
-      after_count = monthly_budget.expected_cash_flows.count
-
-      expect(after_count - before_count).to eq(0)
-    end
-
-    it "renders a JSON response with errors for the new cash_flow" do
-      actual_cash_flow.save!
-
-      delete :destroy, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, id: actual_cash_flow.to_param }, session: valid_session
-      expect(response).to have_http_status(:not_found)
-      expect(response.content_type).to eq('application/json; charset=utf-8')
     end
   end
 end
