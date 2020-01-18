@@ -53,7 +53,8 @@ class CashFlowsController < ApplicationController
     @category = @user.categories.find(cash_flow_params[:category_id])
     return if @category
 
-    render json: { message: "category_id is mandatory" }, status: :bad_request
+    render json: { message: "category_id should be valid" },
+           status: :bad_request
   end
 
   # Use callbacks to share common setup or constraints between actions.

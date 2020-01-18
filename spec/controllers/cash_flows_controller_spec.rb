@@ -117,9 +117,18 @@ RSpec.describe CashFlowsController, type: :controller do
         expect(response_body['message']).to eq 'Params: monthly_budget_id should be of format MMYYYY'
       end
 
-      it "renders a JSON response with errors for the new cash_flow" do
+      it "renders a JSON response with errors for the new cash_flow with invalid category id" do
         post :create, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, cash_flow: invalid_attributes }, session: valid_session
         expect(response).to have_http_status(:bad_request)
+
+        response_body = JSON.parse(response.body)
+        expect(response_body['message']).to eq 'category_id should be valid'
+        expect(response.content_type).to eq('application/json; charset=utf-8')
+      end
+
+      it "renders a JSON response with errors for the new cash_flow" do
+        post :create, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, cash_flow: { category_id: category.id, value: "test" } }, session: valid_session
+        expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
