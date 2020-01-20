@@ -5,6 +5,7 @@ class User
 
   field :email, type: String
 
+  embeds_one :user_profile
   embeds_many :goals
   embeds_many :assets
   embeds_many :categories
