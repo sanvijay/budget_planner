@@ -58,6 +58,35 @@ RSpec.describe Category, type: :model do
       end
     end
 
+    context "with goal" do
+      it "doesn't allow goal of another user" do
+        user2 = User.create(email: "example@sample.com")
+        goal = user2.goals.build(
+          description: "Bike",
+          target: 1000,
+          start_date: Date.today,
+          end_date: Date.today + 1
+        )
+
+        category.goal_id = goal.id
+        category.save
+        expect(category).not_to be_valid
+      end
+
+      it "is valid with valid current user goal" do
+        goal = user.goals.build(
+          description: "Bike",
+          target: 1000,
+          start_date: Date.today,
+          end_date: Date.today + 1
+        )
+
+        category.goal_id = goal.id
+        category.save
+        expect(category).to be_valid
+      end
+    end
+
     context "with category scope" do
       before do
         user.save

@@ -40,33 +40,4 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
       expect(response_body).to eq("Expense" => { category.to_param => { Date.today.year.to_s => { Date.today.month.to_s => { "value" => 1000.0 } } } })
     end
   end
-
-  describe "POST #create" do
-    before { user.save! }
-
-    context "with valid params" do
-      it "creates a new monthly_budget" do
-        before_count = user.monthly_budgets.count
-        post :create, params: { user_id: user.to_param, monthly_budget: valid_attributes }, session: valid_session
-        user.reload
-        after_count = user.monthly_budgets.count
-
-        expect(after_count - before_count).to eq 1
-      end
-
-      it "renders a JSON response with the new monthly_budget" do
-        post :create, params: { user_id: user.to_param, monthly_budget: valid_attributes }, session: valid_session
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
-    end
-
-    context "with invalid params" do
-      it "renders a JSON response with errors for the new monthly_budget" do
-        post :create, params: { user_id: user.to_param, monthly_budget: invalid_attributes }, session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json; charset=utf-8')
-      end
-    end
-  end
 end

@@ -105,5 +105,26 @@ RSpec.describe Goal, type: :model do
         expect(goal).not_to be_valid
       end
     end
+
+    context "with categories and expected cash flows" do
+      it "does not allow to create a record if category with same title is present" do
+        user.save!
+        user.categories.create!(title: valid_attr[:description], type: 'EMI')
+
+        expect(goal).not_to be_valid
+        expect(goal.errors.messages[:title][0]).to eq "can't have description with already existing category"
+      end
+    end
+
+    context "with call backs" do
+      before { user.save! }
+
+      it "creates category if not present" do
+        expect { goal.save! }.to change { user.categories.count }.by(1)
+        expect(user.categories.last.goal).to eq goal
+      end
+
+      it "creates expected cashflows"
+    end
   end
 end

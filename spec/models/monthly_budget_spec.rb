@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe MonthlyBudget, type: :model do
   let(:user) { User.new(email: "sample@example.com") }
-  let(:monthly_budget) { user.monthly_budgets.build(month: Date.today) }
+  let(:monthly_budget) { user.monthly_budgets.build(month: Date.new(1992, 3, 28)) }
 
   describe "validations" do
     it 'is invalid without user_id' do
@@ -19,13 +19,13 @@ RSpec.describe MonthlyBudget, type: :model do
       before { monthly_budget.save! }
 
       it 'returns the correct records for the scope of_the_year' do
-        expect(described_class.of_the_year(Date.today.year).count).to eq 1
-        expect(described_class.of_the_year(Date.today.year + 1).count).to eq 0
+        expect(described_class.of_the_year(monthly_budget.month.year).count).to eq 1
+        expect(described_class.of_the_year(monthly_budget.month.year + 1).count).to eq 0
       end
 
       it 'returns the correct records for the scope of_the_month' do
-        expect(described_class.of_the_month(Date.today).count).to eq 1
-        expect(described_class.of_the_month(Date.today + 31.days).count).to eq 0
+        expect(described_class.of_the_month(monthly_budget.month).count).to eq 1
+        expect(described_class.of_the_month(monthly_budget.month + 31.days).count).to eq 0
       end
     end
 
@@ -41,23 +41,27 @@ RSpec.describe MonthlyBudget, type: :model do
       end
 
       it "does not allow duplicate monthly_budget" do
-        duplicate_category = monthly_budget.dup
-        duplicate_category.month = monthly_budget.month
-        user.categories << duplicate_category
+        duplicate_monthly_budget = user.monthly_budgets.build(month: Date.new(monthly_budget.month.year, monthly_budget.month.month, monthly_budget.month.day + 1))
 
         monthly_budget.save
-        expect(duplicate_category).not_to be_valid
+        expect(duplicate_monthly_budget.save).to be_falsey
       end
 
       it "allows duplicate monthly_budget for different users" do
-        duplicate_category = monthly_budget.dup
-        duplicate_category.month = monthly_budget.month
-
         user2 = User.create(email: "sample2@example.com")
-        user2.categories << duplicate_category
+        duplicate_monthly_budget = user2.monthly_budgets.build(month: monthly_budget.month)
 
         monthly_budget.save
-        expect(duplicate_category).to be_valid
+        expect(duplicate_monthly_budget).to be_valid
+      end
+
+      it "always save the month with day 1" do
+        user.save!
+        mon_budget1 = user.monthly_budgets.create(month: Date.new(1992, 3, 28))
+        expect(mon_budget1.month).to eq Date.new(1992, 3, 1)
+
+        mon_budget2 = user.monthly_budgets.create(month: Date.new(1992, 3, 1))
+        expect(mon_budget2.month).to eq Date.new(1992, 3, 1)
       end
     end
 

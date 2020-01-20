@@ -15,7 +15,8 @@ class CashFlow
   before_save :set_value_precision
 
   def category
-    @category ||= monthly_budget.user.categories.find(category_id)
+    @category ||= category_id &&
+                  monthly_budget.user.categories.find(category_id)
   end
 
   private

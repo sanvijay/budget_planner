@@ -17,8 +17,10 @@ class Goal
   validates :end_date, presence: true
 
   validate :end_date_cannot_be_in_past_of_start_date
+  validate :description_with_same_category_title
 
   before_save :set_target_precision
+  after_create :create_category, :create_expected_cash_flows
 
   private
 
@@ -31,5 +33,43 @@ class Goal
     return true if start_date < end_date
 
     errors.add(:end_date, "can't be in the past of start date")
+  end
+
+  def description_with_same_category_title
+    return unless user&.categories&.find_by(title: description)
+
+    errors.add(
+      :title,
+      "can't have description with already existing category"
+    )
+  end
+
+  def create_category
+    @category = user.categories.create!(
+      title: description,
+      type: "EMI",
+      goal_id: id
+    )
+  end
+
+  def create_expected_cash_flows
+    num_of_months = num_of_months_needs_to_achieve_goal
+    split = target / num_of_months
+    num_of_months.times do |i|
+      monthly_budget = user.monthly_budgets.find_or_create_by(
+        month: start_date.beginning_of_month + i.month
+      )
+      monthly_budget.expected_cash_flows.create!(
+        category_id: @category.id, value: split
+      )
+    end
+  end
+
+  def num_of_months_needs_to_achieve_goal
+    start = start_date.beginning_of_month
+    complete = end_date.end_of_month
+
+    # https://stackoverflow.com/a/9428676
+    (complete.year * 12 + complete.month) - (start.year * 12 + start.month) + 1
   end
 end

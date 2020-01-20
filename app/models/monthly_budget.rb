@@ -23,7 +23,17 @@ class MonthlyBudget
     )
   }
 
+  before_validation :set_month_as_beginning
+
   def to_param
     "#{format('%<digit>02d', digit: month.month)}#{month.year}"
+  end
+
+  private
+
+  def set_month_as_beginning
+    return if month.blank?
+
+    self.month = month.beginning_of_month
   end
 end

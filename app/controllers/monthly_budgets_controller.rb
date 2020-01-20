@@ -10,26 +10,10 @@ class MonthlyBudgetsController < ApplicationController
     end
   end
 
-  # POST /monthly_budgets
-  def create
-    @monthly_budget = @user.monthly_budgets.build(monthly_budget_params)
-
-    if @monthly_budget.save
-      render json: @monthly_budget, status: :created
-    else
-      render json: @monthly_budget.errors, status: :unprocessable_entity
-    end
-  end
-
   private
 
   def set_user
     @user = User.find(params[:user_id])
-  end
-
-  # Only allow a trusted parameter "white list" through.
-  def monthly_budget_params
-    params.require(:monthly_budget).permit(:month)
   end
 
   def yearly_budgets
