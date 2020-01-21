@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
       resources :monthly_budgets, except: [:show, :update, :destroy] do
         resources :cash_flows, only: [:index]
-        resources :cash_flows, only: [:create], path: 'expected_cash_flows'
+        resources :cash_flows, only: [:create], path: 'planned_cash_flows'
       end
     end
   end

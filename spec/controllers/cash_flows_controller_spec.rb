@@ -10,7 +10,7 @@ RSpec.describe CashFlowsController, type: :controller do
   let(:user)               { User.create(email: "sample@example.com") }
   let(:category)           { user.categories.create(title: "House Rent", type: "Expense") }
   let(:monthly_budget)     { user.monthly_budgets.build(month: Date.today.to_s) }
-  let(:expected_cash_flow) { monthly_budget.expected_cash_flows.build(valid_attributes) }
+  let(:planned_cash_flow) { monthly_budget.planned_cash_flows.build(valid_attributes) }
   let(:actual_cash_flow)   { monthly_budget.actual_cash_flows.build(valid_attributes) }
 
   # This should return the minimal set of values that should be in the session
@@ -20,7 +20,7 @@ RSpec.describe CashFlowsController, type: :controller do
 
   describe "GET #index" do
     before do
-      expected_cash_flow.save!
+      planned_cash_flow.save!
       actual_cash_flow.save!
     end
 
@@ -89,10 +89,10 @@ RSpec.describe CashFlowsController, type: :controller do
 
     context "with valid params" do
       it "creates a new Expected CashFlow" do
-        before_count = monthly_budget.expected_cash_flows.count
+        before_count = monthly_budget.planned_cash_flows.count
         post :create, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, cash_flow: valid_attributes }, session: valid_session
         monthly_budget.reload
-        after_count = monthly_budget.expected_cash_flows.count
+        after_count = monthly_budget.planned_cash_flows.count
 
         expect(after_count - before_count).to eq 1
         expect(response).to have_http_status(:created)

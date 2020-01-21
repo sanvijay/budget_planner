@@ -20,7 +20,7 @@ class Goal
   validate :description_with_same_category_title
 
   before_save :set_target_precision
-  after_create :create_category, :create_expected_cash_flows
+  after_create :create_category, :create_planned_cash_flows
 
   def category
     @category ||= user.categories.find_by(goal_id: id)
@@ -28,7 +28,7 @@ class Goal
 
   def planned_cash_flow
     user.monthly_budgets.of_period(start_date, end_date).inject(0) do |sum, mb|
-      sum + mb.expected_cash_flows.find_by(category_id: category.id).try(:value)
+      sum + mb.planned_cash_flows.find_by(category_id: category.id).try(:value)
     end
   end
 
@@ -62,14 +62,14 @@ class Goal
     )
   end
 
-  def create_expected_cash_flows
+  def create_planned_cash_flows
     num_of_months = num_of_months_needs_to_achieve_goal
     split = target / num_of_months
     num_of_months.times do |i|
       monthly_budget = user.monthly_budgets.find_or_create_by(
         month: start_date.beginning_of_month + i.month
       )
-      monthly_budget.expected_cash_flows.create!(
+      monthly_budget.planned_cash_flows.create!(
         category_id: @category.id, value: split
       )
     end

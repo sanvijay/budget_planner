@@ -21,7 +21,7 @@ class MonthlyBudgetsController < ApplicationController
 
     @results = {}
     yearly_budgets.each do |budget|
-      budget.expected_cash_flows.each do |cf|
+      budget.planned_cash_flows.each do |cf|
         deep_hash_budgets(budget, cf)
       end
     end

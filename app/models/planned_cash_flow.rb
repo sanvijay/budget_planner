@@ -1,0 +1,1 @@
+class PlannedCashFlow < CashFlow; end

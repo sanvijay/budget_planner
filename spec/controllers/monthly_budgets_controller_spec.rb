@@ -10,7 +10,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
   let(:user)               { User.create(email: "sample@example.com") }
   let(:category)           { user.categories.create(title: "House Rent", type: "Expense") }
   let(:monthly_budget)     { user.monthly_budgets.build(valid_attributes) }
-  let(:expected_cash_flow) { monthly_budget.expected_cash_flows.build(category_id: category.id, value: 1000) }
+  let(:planned_cash_flow) { monthly_budget.planned_cash_flows.build(category_id: category.id, value: 1000) }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -32,7 +32,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
     end
 
     it "returns a JSON response with monthly_budget and cash_flows" do
-      expected_cash_flow.save!
+      planned_cash_flow.save!
       get :index, params: { user_id: user.to_param, year: Date.today.year }, session: valid_session
 
       response_body = JSON.parse(response.body)

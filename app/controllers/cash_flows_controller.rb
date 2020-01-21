@@ -1,6 +1,6 @@
 class CashFlowsController < ApplicationController
   before_action :set_user, :set_monthly_budget
-  before_action :set_category, :set_expected_cash_flows, only: %i[create]
+  before_action :set_category, :set_planned_cash_flows, only: %i[create]
 
   # GET /cash_flows
   def index
@@ -12,16 +12,16 @@ class CashFlowsController < ApplicationController
   # This is only for expected cashflow
   # If record is already there, update it.
   def create
-    @expected_cash_flow ||= @monthly_budget.expected_cash_flows.build(
+    @planned_cash_flow ||= @monthly_budget.planned_cash_flows.build(
       category_id: @category.id
     )
 
-    @expected_cash_flow.value = cash_flow_params[:value]
+    @planned_cash_flow.value = cash_flow_params[:value]
 
-    if @expected_cash_flow.save
-      render json: @expected_cash_flow, status: :created
+    if @planned_cash_flow.save
+      render json: @planned_cash_flow, status: :created
     else
-      render json: @expected_cash_flow.errors, status: :unprocessable_entity
+      render json: @planned_cash_flow.errors, status: :unprocessable_entity
     end
   end
 
@@ -58,8 +58,8 @@ class CashFlowsController < ApplicationController
   end
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_expected_cash_flows
-    @expected_cash_flow = @monthly_budget.expected_cash_flows.find_by(
+  def set_planned_cash_flows
+    @planned_cash_flow = @monthly_budget.planned_cash_flows.find_by(
       category_id: @category.id
     )
   end
@@ -70,11 +70,11 @@ class CashFlowsController < ApplicationController
 
   def calculate_all_cash_flows
     if params[:filter].blank? || params[:filter] == 'all'
-      { expected: @monthly_budget.expected_cash_flows,
+      { expected: @monthly_budget.planned_cash_flows,
         actual: @monthly_budget.actual_cash_flows }
 
     elsif params[:filter] == 'expected'
-      { expected: @monthly_budget.expected_cash_flows }
+      { expected: @monthly_budget.planned_cash_flows }
 
     elsif params[:filter] == 'actual'
       { actual: @monthly_budget.actual_cash_flows }
