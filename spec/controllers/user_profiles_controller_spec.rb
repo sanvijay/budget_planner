@@ -52,7 +52,15 @@ RSpec.describe UserProfilesController, type: :controller do
     it "returns nil JSON response for no user_profile" do
       get :show, params: { user_id: user.to_param }, session: valid_session
 
-      expect(JSON.parse(response.body)).to be_nil
+      response_body = JSON.parse(response.body)
+      slice_keys = %w[first_name last_name dob gender]
+      validate_attr = response_body.slice(*slice_keys)
+      expect(validate_attr).to eq(
+        "dob" => nil,
+        "first_name" => nil,
+        "gender" => nil,
+        "last_name" => nil
+      )
     end
   end
 

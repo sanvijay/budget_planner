@@ -46,6 +46,7 @@ class Goal
   end
 
   def description_with_same_category_title
+    return unless new_record?
     return unless user&.categories&.find_by(title: description)
 
     errors.add(

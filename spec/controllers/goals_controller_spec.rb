@@ -133,6 +133,12 @@ RSpec.describe GoalsController, type: :controller do
         expect(goal.target).to eq new_attributes[:target]
       end
 
+      it "updates the requested goal target alone" do
+        put :update, params: { user_id: user.to_param, id: goal.to_param, goal: { target: 2000 } }, session: valid_session
+        goal.reload
+        expect(goal.target).to eq 2000
+      end
+
       it "renders a JSON response with the goal" do
         put :update, params: { user_id: user.to_param, id: goal.to_param, goal: new_attributes }, session: valid_session
         expect(response).to have_http_status(:ok)
