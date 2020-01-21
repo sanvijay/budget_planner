@@ -4,7 +4,7 @@ class GoalsController < ApplicationController
 
   # GET /goals
   def index
-    @goals = @user.goals
+    @goals = @user.goals.map { |g| g[:planned] = g.planned_cash_flow; g; } # rubocop:disable Style/Semicolon
 
     render json: @goals
   end
@@ -19,6 +19,7 @@ class GoalsController < ApplicationController
     @goal = @user.goals.build(goal_params)
 
     if @goal.save
+      @goal[:planned] = @goal.planned_cash_flow
       render json: @goal, status: :created
     else
       render json: @goal.errors, status: :unprocessable_entity

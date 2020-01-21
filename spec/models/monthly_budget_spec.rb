@@ -27,6 +27,12 @@ RSpec.describe MonthlyBudget, type: :model do
         expect(described_class.of_the_month(monthly_budget.month).count).to eq 1
         expect(described_class.of_the_month(monthly_budget.month + 31.days).count).to eq 0
       end
+
+      it 'returns the correct records for the scope of_period' do
+        expect(described_class.of_period(monthly_budget.month, monthly_budget.month).count).to eq 1
+        expect(described_class.of_period(monthly_budget.month + 31.days, monthly_budget.month + 31).count).to eq 0
+        expect(described_class.of_period(monthly_budget.month, monthly_budget.month - 31).count).to eq 0
+      end
     end
 
     context "with month" do

@@ -44,13 +44,14 @@ RSpec.describe GoalsController, type: :controller do
       response_body = JSON.parse(response.body)
       expect(response_body.count).to eq 1
 
-      slice_keys = %w[description target start_date end_date]
+      slice_keys = %w[description target start_date end_date planned]
       validate_attr = response_body[0].slice(*slice_keys)
       expect(validate_attr).to eq(
         "description" => "Bike",
         "end_date" => (Date.today + 1).to_s,
         "start_date" => Date.today.to_s,
-        "target" => 1000.0
+        "target" => 1000.0,
+        "planned" => 1000.0
       )
     end
   end
@@ -84,6 +85,21 @@ RSpec.describe GoalsController, type: :controller do
         after_count = user.goals.count
 
         expect(after_count - before_count).to eq 1
+      end
+
+      it "returns the goal hash" do
+        post :create, params: { user_id: user.to_param, goal: valid_attributes }, session: valid_session
+
+        response_body = JSON.parse(response.body)
+        slice_keys = %w[description target start_date end_date planned]
+        validate_attr = response_body.slice(*slice_keys)
+        expect(validate_attr).to eq(
+          "description" => "Bike",
+          "end_date" => (Date.today + 1).to_s,
+          "start_date" => Date.today.to_s,
+          "target" => 1000.0,
+          "planned" => 1000.0
+        )
       end
 
       it "renders a JSON response with the new goal" do

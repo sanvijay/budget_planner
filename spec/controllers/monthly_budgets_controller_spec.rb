@@ -4,11 +4,10 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # monthly_budget. As you add validations to monthly_budget, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) { { month: Date.today.to_s } }
-
+  let(:valid_attributes)   { { month: Date.today.to_s } }
   let(:invalid_attributes) { { month: "" } }
 
-  let(:user) { User.create(email: "sample@example.com") }
+  let(:user)               { User.create(email: "sample@example.com") }
   let(:category)           { user.categories.create(title: "House Rent", type: "Expense") }
   let(:monthly_budget)     { user.monthly_budgets.build(valid_attributes) }
   let(:expected_cash_flow) { monthly_budget.expected_cash_flows.build(category_id: category.id, value: 1000) }

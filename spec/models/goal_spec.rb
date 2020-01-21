@@ -115,16 +115,42 @@ RSpec.describe Goal, type: :model do
         expect(goal.errors.messages[:title][0]).to eq "can't have description with already existing category"
       end
     end
+  end
 
-    context "with call backs" do
-      before { user.save! }
+  describe "call backs" do
+    before { user.save! }
 
-      it "creates category if not present" do
-        expect { goal.save! }.to change { user.categories.count }.by(1)
-        expect(user.categories.last.goal).to eq goal
-      end
-
-      it "creates expected cashflows"
+    it "creates category if not present" do
+      expect { goal.save! }.to change { user.categories.count }.by(1)
+      expect(user.categories.last.goal).to eq goal
     end
+
+    pending "should not create goal if category fails to create" do
+      user.categories.create!(title: valid_attr[:description], type: 'EMI')
+      expect { goal.save(validate: false) }.to raise_exception(Mongoid::Errors::Validations)
+      expect(user.goals.count).to eq 0
+    end
+
+    it "creates expected cashflows"
+    it "creates multiple expected cashflows for longer period"
+    it "should not create goal and category if expected cashflows fails to create"
+  end
+
+  describe "#category" do
+    it "returns the category that is created" do
+      goal.save!
+      expect(goal.category).to eq user.categories.last
+      expect(goal.category).to eq user.categories.find_by(goal_id: goal.id)
+    end
+  end
+
+  describe "#planned_cash_flow" do
+    it "returns the planned amount for this goal" do
+      goal.save!
+      expect(goal.planned_cash_flow).to eq valid_attr[:target]
+    end
+
+    it "returns the value that is calculated for that period even after changes"
+    it "does not compute the value that is not in that period"
   end
 end

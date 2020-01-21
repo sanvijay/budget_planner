@@ -23,6 +23,13 @@ class MonthlyBudget
     )
   }
 
+  scope :of_period, lambda { |from, to|
+    where(
+      :month.gte => from.beginning_of_month,
+      :month.lte => to.end_of_month
+    )
+  }
+
   before_validation :set_month_as_beginning
 
   def to_param

@@ -22,6 +22,16 @@ class Goal
   before_save :set_target_precision
   after_create :create_category, :create_expected_cash_flows
 
+  def category
+    @category ||= user.categories.find_by(goal_id: id)
+  end
+
+  def planned_cash_flow
+    user.monthly_budgets.of_period(start_date, end_date).inject(0) do |sum, mb|
+      sum + mb.expected_cash_flows.find_by(category_id: category.id).try(:value)
+    end
+  end
+
   private
 
   def set_target_precision
