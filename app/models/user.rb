@@ -6,6 +6,7 @@ class User
   field :email, type: String
 
   embeds_one :user_profile, autobuild: true
+  embeds_one :custom_rule, autobuild: true
   embeds_many :goals
   embeds_many :assets
   embeds_many :categories

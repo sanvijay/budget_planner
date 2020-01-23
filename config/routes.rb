@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     member do
       resources :assets, :goals, :categories
       resource :user_profile, only: [:show, :update]
+      resource :custom_rule, only: [:show, :update]
 
       resources :monthly_budgets, except: [:show, :update, :destroy] do
         resources :cash_flows, only: [:index]
