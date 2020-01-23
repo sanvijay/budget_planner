@@ -9,6 +9,7 @@ class UserProfile
   field :last_name, type: String
   field :dob, type: Date
   field :gender, type: String
+  field :monthly_income, type: Float
 
   embedded_in :user
 
@@ -19,7 +20,19 @@ class UserProfile
 
   validate :dob_to_be_in_past
 
+  before_save :set_monthly_income_precision
+
   private
+
+  def set_monthly_income_precision
+    self.monthly_income &&= monthly_income.round(2)
+  end
+
+  def age
+    return 0 if dob.nil?
+
+    @age ||= Date.today.year - dob.year
+  end
 
   def dob_to_be_in_past
     return if dob.nil?

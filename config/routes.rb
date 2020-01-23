@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :users, only: [:show, :create, :destroy], param: :user_id do
     member do
       resources :assets, :goals, :categories
-      resource :user_profiles, only: [:show, :update]
+      resource :user_profile, only: [:show, :update]
 
       resources :monthly_budgets, except: [:show, :update, :destroy] do
         resources :cash_flows, only: [:index]

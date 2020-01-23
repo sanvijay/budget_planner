@@ -71,4 +71,30 @@ RSpec.describe UserProfile, type: :model do
       end
     end
   end
+
+  describe "call backs" do
+    it 'sets the precision only if monthly_income present' do
+      user_profile.monthly_income = nil
+      user_profile.save
+      expect(user_profile.reload.monthly_income).to eq nil
+    end
+
+    it 'sets the precision to 2 decimals - monthly_income' do
+      user_profile.monthly_income = 1234.5678
+      user_profile.save
+      expect(user_profile.reload.monthly_income).to eq 1234.57
+    end
+  end
+
+  describe "#age" do
+    it 'calculates the age' do
+      user_profile.dob = Date.today - 27.years
+      expect(user_profile.age).to eq 27
+    end
+
+    it 'calculates the age as 0 if dob is nil' do
+      user_profile.dob = nil
+      expect(user_profile.age).to eq 0
+    end
+  end
 end

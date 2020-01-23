@@ -9,7 +9,8 @@ RSpec.describe UserProfilesController, type: :controller do
       first_name: "Bike",
       last_name: "Racer",
       dob: Date.today - 1.days,
-      gender: "Male"
+      gender: "Male",
+      monthly_income: nil
     }
   end
 
@@ -42,7 +43,7 @@ RSpec.describe UserProfilesController, type: :controller do
 
       response_body = JSON.parse(response.body)
 
-      slice_keys = %w[first_name last_name dob gender]
+      slice_keys = %w[first_name last_name dob gender monthly_income]
       validate_attr = response_body.slice(*slice_keys)
       validate_attr["dob"] = Date.parse(validate_attr["dob"])
 
@@ -53,13 +54,14 @@ RSpec.describe UserProfilesController, type: :controller do
       get :show, params: { user_id: user.to_param }, session: valid_session
 
       response_body = JSON.parse(response.body)
-      slice_keys = %w[first_name last_name dob gender]
+      slice_keys = %w[first_name last_name dob gender monthly_income]
       validate_attr = response_body.slice(*slice_keys)
       expect(validate_attr).to eq(
         "dob" => nil,
         "first_name" => nil,
         "gender" => nil,
-        "last_name" => nil
+        "last_name" => nil,
+        "monthly_income" => nil
       )
     end
   end

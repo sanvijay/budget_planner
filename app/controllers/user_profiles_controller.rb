@@ -3,7 +3,7 @@ class UserProfilesController < ApplicationController
 
   # GET /users/1/user_profiles
   def show
-    render json: @user.user_profile
+    render json: @user_profile
   end
 
   # PATCH/PUT /categories/1
