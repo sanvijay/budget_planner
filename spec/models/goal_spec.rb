@@ -22,6 +22,17 @@ RSpec.describe Goal, type: :model do
       expect(goal).to be_valid
     end
 
+    context "with score_weightage_out_of_100" do
+      it 'sets score_weightage_out_of_100 by default' do
+        expect(goal.score_weightage_out_of_100).to eq 100
+      end
+
+      it 'does not allow empty value' do
+        goal.score_weightage_out_of_100 = '     '
+        expect(goal).not_to be_valid
+      end
+    end
+
     context "with description" do
       it 'does not allow empty value' do
         goal.description = '     '

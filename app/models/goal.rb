@@ -8,6 +8,7 @@ class Goal
   field :end_date, type: Date
   field :target, type: Float
   field :completed, type: Boolean
+  field :score_weightage_out_of_100, type: Integer, default: 100
 
   embedded_in :user
 
@@ -15,6 +16,7 @@ class Goal
   validates :target, presence: true, numericality: true
   validates :start_date, presence: true
   validates :end_date, presence: true
+  validates :score_weightage_out_of_100, presence: true
 
   validate :end_date_cannot_be_in_past_of_start_date
   validate :description_with_same_category_title

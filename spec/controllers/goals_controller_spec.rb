@@ -9,7 +9,8 @@ RSpec.describe GoalsController, type: :controller do
       description: "Bike",
       target: 1000,
       start_date: Date.today,
-      end_date: Date.today + 1
+      end_date: Date.today + 1,
+      score_weightage_out_of_100: 10
     }
   end
 
@@ -44,14 +45,15 @@ RSpec.describe GoalsController, type: :controller do
       response_body = JSON.parse(response.body)
       expect(response_body.count).to eq 1
 
-      slice_keys = %w[description target start_date end_date planned]
+      slice_keys = %w[description target start_date end_date planned score_weightage_out_of_100]
       validate_attr = response_body[0].slice(*slice_keys)
       expect(validate_attr).to eq(
         "description" => "Bike",
         "end_date" => (Date.today + 1).to_s,
         "start_date" => Date.today.to_s,
         "target" => 1000.0,
-        "planned" => 1000.0
+        "planned" => 1000.0,
+        "score_weightage_out_of_100" => 10
       )
     end
   end
@@ -63,13 +65,14 @@ RSpec.describe GoalsController, type: :controller do
       expect(response).to be_successful
 
       response_body = JSON.parse(response.body)
-      slice_keys = %w[description target start_date end_date]
+      slice_keys = %w[description target start_date end_date score_weightage_out_of_100]
       validate_attr = response_body.slice(*slice_keys)
       expect(validate_attr).to eq(
         "description" => "Bike",
         "end_date" => (Date.today + 1).to_s,
         "start_date" => Date.today.to_s,
-        "target" => 1000.0
+        "target" => 1000.0,
+        "score_weightage_out_of_100" => 10
       )
     end
   end
@@ -91,14 +94,15 @@ RSpec.describe GoalsController, type: :controller do
         post :create, params: { user_id: user.to_param, goal: valid_attributes }, session: valid_session
 
         response_body = JSON.parse(response.body)
-        slice_keys = %w[description target start_date end_date planned]
+        slice_keys = %w[description target start_date end_date planned score_weightage_out_of_100]
         validate_attr = response_body.slice(*slice_keys)
         expect(validate_attr).to eq(
           "description" => "Bike",
           "end_date" => (Date.today + 1).to_s,
           "start_date" => Date.today.to_s,
           "target" => 1000.0,
-          "planned" => 1000.0
+          "planned" => 1000.0,
+          "score_weightage_out_of_100" => 10
         )
       end
 
