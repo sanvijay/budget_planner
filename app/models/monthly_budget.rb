@@ -16,6 +16,13 @@ class MonthlyBudget
     )
   }
 
+  scope :of_the_financial_year, lambda { |year|
+    where(
+      :month.gte => Date.new(year, 4, 1),
+      :month.lte => Date.new(year + 1, 3, 31)
+    )
+  }
+
   scope :of_the_month, lambda { |date|
     where(
       :month.gte => date.beginning_of_month,

@@ -147,6 +147,21 @@ RSpec.describe Goal, type: :model do
     it "should not create goal and category if expected cashflows fails to create"
   end
 
+  describe "scope" do
+    before do
+      user.save!
+      user.goals.create!(description: "Goal 1", target: 10, start_date: Date.new(2020, 4, 1), end_date: Date.new(2020, 4, 30))
+    end
+
+    it "brings goal of that financial year for during_financial_year" do
+      expect(user.goals.during_financial_year(2020).count).to eq 1
+    end
+
+    it "does not brings goal of financial year if not present for during_financial_year" do
+      expect(user.goals.during_financial_year(2019).count).to eq 0
+    end
+  end
+
   describe "#category" do
     it "returns the category that is created" do
       goal.save!

@@ -12,7 +12,8 @@ class Goal
 
   embedded_in :user
 
-  validates :description, presence: true, length: { maximum: 255 }
+  validates :description, presence: true, length: { maximum: 255 },
+                          uniqueness: { case_sensitive: false }
   validates :target, presence: true, numericality: true
   validates :start_date, presence: true
   validates :end_date, presence: true
@@ -20,6 +21,13 @@ class Goal
 
   validate :end_date_cannot_be_in_past_of_start_date
   validate :description_with_same_category_title
+
+  scope :during_financial_year, lambda { |year|
+    where(
+      :end_date.gte => Date.new(year, 4, 1),
+      :start_date.lte => Date.new(year + 1, 3, 31)
+    )
+  }
 
   before_save :set_target_precision
   after_create :create_category, :create_planned_cash_flows
@@ -52,8 +60,7 @@ class Goal
     return unless user&.categories&.find_by(title: description)
 
     errors.add(
-      :title,
-      "can't have description with already existing category"
+      :title, "can't have description with already existing category"
     )
   end
 
