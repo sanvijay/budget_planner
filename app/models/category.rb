@@ -9,6 +9,8 @@ class Category
   field :title, type: String
   field :type, type: String
   field :goal_id, type: BSON::ObjectId
+  field :benefit_id, type: BSON::ObjectId
+  field :asset_id, type: BSON::ObjectId
 
   embedded_in :user
 
@@ -30,6 +32,14 @@ class Category
 
   def goal
     @goal ||= goal_id && user.goals.find(goal_id)
+  end
+
+  def benefit
+    @benefit ||= benefit_id && user.benefits.find(benefit_id)
+  end
+
+  def asset
+    @asset ||= asset_id && user.assets.find(asset_id)
   end
 
   private

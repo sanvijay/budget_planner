@@ -27,9 +27,10 @@ RSpec.describe CategoriesController, type: :controller do
       get :index, params: { user_id: user.to_param }, session: valid_session
 
       response_body = JSON.parse(response.body)
+
       expect(response_body).to eq(
         "Income" => [],
-        "Expense" => [{ "id" => category.to_param, "title" => category.title, "type" => category.type }],
+        "Expense" => [{ "id" => category.to_param, "title" => category.title, "type" => category.type, "asset_id" => nil, "asset" => nil, "benefit" => nil, "benefit_id" => nil, "goal" => nil }],
         "EMI" => [],
         "EquityInvestment" => [],
         "DebtInvestment" => []

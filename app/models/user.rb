@@ -10,6 +10,7 @@ class User
   embeds_many :goals
   embeds_many :assets
   embeds_many :categories
+  embeds_many :benefits
   has_many :monthly_budgets
 
   # Validation for email

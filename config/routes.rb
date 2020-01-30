@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [:show, :create, :destroy], param: :user_id do
     member do
-      resources :assets, :goals, :categories
+      resources :assets, :goals, :categories, :benefits
       resource :user_profile, only: [:show, :update]
       resource :custom_rule, only: [:show, :update]
 
