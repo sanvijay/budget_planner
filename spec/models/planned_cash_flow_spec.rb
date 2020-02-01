@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PlannedCashFlow, type: :model do
-  let(:user)             { User.create(email: "sample@example.com") }
+  let(:user)             { User.create(email: "sample@example.com", password: "Qweasd12!") }
   let(:category)         { user.categories.create(title: "House Rent", type: "Expense") }
   let(:monthly_budget)   { user.monthly_budgets.build(month: Date.today) }
   let(:planned_cash_flow) { monthly_budget.planned_cash_flows.build(category_id: category.id, value: 1000) }
@@ -36,7 +36,7 @@ RSpec.describe PlannedCashFlow, type: :model do
       end
 
       it 'does not allow non-existing category of this user' do
-        new_category = User.create(email: "sample2@example.com").categories.create(title: "House Rent", type: "Expense")
+        new_category = User.create(email: "sample2@example.com", password: "Qweasd12!").categories.create(title: "House Rent", type: "Expense")
         expect(new_category.id).not_to eq category.id
 
         planned_cash_flow.category_id = new_category.id

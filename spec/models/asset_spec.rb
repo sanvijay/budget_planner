@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Asset, type: :model do
-  let(:user)       { User.new(email: "sample@example.com") }
+  let(:user)       { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:valid_attr) { { title: "House", value: 1000 } }
   let(:asset)      { user.assets.build(valid_attr) }
 

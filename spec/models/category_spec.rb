@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Category, type: :model do
-  let(:user) { User.new(email: "sample@example.com") }
+  let(:user)     { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:category) { user.categories.build(valid_attr) }
 
   let(:valid_attr) { { title: "Test", type: "Income" } }

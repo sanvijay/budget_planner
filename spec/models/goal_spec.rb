@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Goal, type: :model do
-  let(:user) { User.new(email: "sample@example.com") }
+  let(:user) { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:goal) { user.goals.build(valid_attr) }
 
   let(:valid_attr) do

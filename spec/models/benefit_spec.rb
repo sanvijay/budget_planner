@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Benefit, type: :model do
-  let(:user)       { User.new(email: "sample@example.com") }
+  let(:user)       { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:valid_attr) { { title: "80C", value: 1000 } }
-  let(:benefit)      { user.benefits.build(valid_attr) }
+  let(:benefit)    { user.benefits.build(valid_attr) }
 
   describe "validations" do
     it 'does not create record without parent' do

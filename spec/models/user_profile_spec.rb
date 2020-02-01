@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe UserProfile, type: :model do
-  let(:user) { User.new(email: "sample@example.com") }
+  let(:user)         { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:user_profile) { user.build_user_profile(valid_attr) }
 
   let(:valid_attr) do

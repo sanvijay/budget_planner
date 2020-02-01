@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe MonthlyBudget, type: :model do
-  let(:user) { User.new(email: "sample@example.com") }
+  let(:user)           { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:monthly_budget) { user.monthly_budgets.build(month: Date.new(1992, 3, 28)) }
 
   describe "validations" do
@@ -59,7 +59,7 @@ RSpec.describe MonthlyBudget, type: :model do
       end
 
       it "allows duplicate monthly_budget for different users" do
-        user2 = User.create(email: "sample2@example.com")
+        user2 = User.create(email: "sample2@example.com", password: "Qweasd12!")
         duplicate_monthly_budget = user2.monthly_budgets.build(month: monthly_budget.month)
 
         monthly_budget.save
