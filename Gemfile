@@ -13,6 +13,8 @@ gem 'puma', '~> 4.1'
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
+gem 'devise'
+gem 'devise-jwt', '~> 0.5.9'
 
 # MongoDB
 gem 'bson_ext'

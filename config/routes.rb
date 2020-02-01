@@ -1,13 +1,21 @@
 Rails.application.routes.draw do
-  match 'login', to: 'users#login', via: [:post]
+  devise_for :users, path: '', path_names: {
+    sign_in: 'login',
+    sign_out: 'logout',
+    registration: 'signup'
+  }, controllers: {
+    sessions: 'sessions',
+    registrations: 'registrations',
+    confirmations: 'confirmations'
+  }
 
-  resources :users, only: [:show, :create, :destroy], param: :user_id do
+  resources :users, only: [], param: :user_id do
     member do
       resources :assets, :goals, :categories, :benefits
-      resource :user_profile, only: [:show, :update]
-      resource :custom_rule, only: [:show, :update]
+      resource :user_profile, only: %i[show update]
+      resource :custom_rule, only: %i[show update]
 
-      resources :monthly_budgets, except: [:show, :update, :destroy] do
+      resources :monthly_budgets, except: %i[show update destroy] do
         resources :cash_flows, only: [:index]
         resources :cash_flows, only: [:create], path: 'planned_cash_flows'
       end
