@@ -7,7 +7,7 @@ RSpec.describe CashFlowsController, type: :routing do
     end
 
     it "routes to #create" do
-      expect(post: "/users/3/monthly_budgets/2/planned_cash_flows").to route_to("cash_flows#create", user_id: "3", monthly_budget_id: "2")
+      expect(post: "/users/3/monthly_budgets/2/cash_flows").to route_to("cash_flows#create", user_id: "3", monthly_budget_id: "2")
     end
   end
 end

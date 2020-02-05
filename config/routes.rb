@@ -16,8 +16,8 @@ Rails.application.routes.draw do
       resource :custom_rule, only: %i[show update]
 
       resources :monthly_budgets, except: %i[show update destroy] do
-        resources :cash_flows, only: [:index]
-        resources :cash_flows, only: [:create], path: 'planned_cash_flows'
+        resources :cash_flows, only: %i[index create]
+        resources :actual_cash_flow_logs, only: %i[create]
       end
     end
   end

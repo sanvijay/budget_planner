@@ -5,24 +5,33 @@ class CashFlow
   embedded_in :monthly_budget
 
   field :category_id, type: BSON::ObjectId
-  field :value, type: Float
+  field :planned, type: Float
 
   validates :category_id, presence: true, uniqueness: true
-  validates :value, presence: true, numericality: true
+  validates :planned, presence: true, numericality: true
 
   validate :category_belongs_to_this_owner
 
-  before_save :set_value_precision
+  before_save :set_planned_precision
 
   def category
     @category ||= category_id &&
                   monthly_budget.user.categories.find(category_id)
   end
 
+  def actual
+    logs.pluck(:value).reduce(:+) || 0
+  end
+
+  def logs
+    @logs ||= monthly_budget.actual_cash_flow_logs
+                            .where(category_id: category_id)
+  end
+
   private
 
-  def set_value_precision
-    self.value = value.round(2)
+  def set_planned_precision
+    self.planned = planned.round(2)
   end
 
   def category_belongs_to_this_owner

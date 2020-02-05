@@ -38,7 +38,7 @@ class Goal
 
   def planned_cash_flow
     user.monthly_budgets.of_period(start_date, end_date).inject(0) do |sum, mb|
-      sum + mb.planned_cash_flows.find_by(category_id: category.id).try(:value)
+      sum + (mb.cash_flows.find_by(category_id: category.id).try(:planned) || 0)
     end
   end
 
@@ -79,8 +79,8 @@ class Goal
       monthly_budget = user.monthly_budgets.find_or_create_by(
         month: start_date.beginning_of_month + i.month
       )
-      monthly_budget.planned_cash_flows.create!(
-        category_id: @category.id, value: split
+      monthly_budget.cash_flows.create!(
+        category_id: @category.id, planned: split
       )
     end
   end

@@ -1,6 +1,6 @@
 class CashFlowsController < ApplicationController
   before_action :set_user, :set_monthly_budget
-  before_action :set_category, :set_planned_cash_flows, only: %i[create]
+  before_action :set_category, :set_cash_flows, only: %i[create]
 
   # GET /cash_flows
   def index
@@ -12,16 +12,16 @@ class CashFlowsController < ApplicationController
   # This is only for expected cashflow
   # If record is already there, update it.
   def create
-    @planned_cash_flow ||= @monthly_budget.planned_cash_flows.build(
+    @cash_flow ||= @monthly_budget.cash_flows.build(
       category_id: @category.id
     )
 
-    @planned_cash_flow.value = cash_flow_params[:value]
+    @cash_flow.planned = cash_flow_params[:planned]
 
-    if @planned_cash_flow.save
-      render json: @planned_cash_flow, status: :created
+    if @cash_flow.save
+      render json: @cash_flow, status: :created
     else
-      render json: @planned_cash_flow.errors, status: :unprocessable_entity
+      render json: @cash_flow.errors, status: :unprocessable_entity
     end
   end
 
@@ -34,7 +34,7 @@ class CashFlowsController < ApplicationController
   def set_monthly_budget
     if (date = parse_date)
       @monthly_budget = @user.monthly_budgets.of_the_month(date).first ||
-                        @user.monthly_budgets.create(month: date)
+                        @user.monthly_budgets.create!(month: date)
     else
       render json: {
         message: "Params: monthly_budget_id should be of format MMYYYY"
@@ -58,8 +58,8 @@ class CashFlowsController < ApplicationController
   end
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_planned_cash_flows
-    @planned_cash_flow = @monthly_budget.planned_cash_flows.find_by(
+  def set_cash_flows
+    @cash_flow = @monthly_budget.cash_flows.find_by(
       category_id: @category.id
     )
   end

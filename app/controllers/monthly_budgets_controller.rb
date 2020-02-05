@@ -21,7 +21,7 @@ class MonthlyBudgetsController < ApplicationController
 
     @results = {}
     yearly_budgets.each do |budget|
-      budget.planned_cash_flows.each do |cf|
+      budget.cash_flows.each do |cf|
         deep_hash_budgets(budget, cf)
       end
     end
@@ -36,6 +36,15 @@ class MonthlyBudgetsController < ApplicationController
           @results[cash_flow.category.type] ||= {}
         )[cash_flow.category.id] ||= {}
       )[budget.month.year] ||= {}
-    )[budget.month.month] ||= { "value": cash_flow.value }
+    )[budget.month.month] ||= cash_flow_details(cash_flow)
+  end
+
+  def cash_flow_details(cash_flow)
+    {
+      "planned": cash_flow.planned,
+      "actual": cash_flow.actual,
+      "id": cash_flow.to_param,
+      "logs": cash_flow.logs
+    }
   end
 end
