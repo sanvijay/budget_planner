@@ -85,6 +85,71 @@ RSpec.describe Category, type: :model do
         category.save
         expect(category).to be_valid
       end
+
+      it "returns nil for empty goal_id" do
+        category.save
+        expect(category.goal).to be_nil
+      end
+    end
+
+    context "with asset" do
+      it "doesn't allow asset of another user" do
+        user2 = User.create(email: "example@sample.com")
+        asset = user2.assets.build(
+          title: "Bike",
+          value: 1000
+        )
+
+        category.asset_id = asset.id
+        category.save
+        expect(category).not_to be_valid
+      end
+
+      it "is valid with valid current user asset" do
+        asset = user.assets.build(
+          title: "Bike",
+          value: 1000
+        )
+
+        category.asset_id = asset.id
+        category.save
+        expect(category).to be_valid
+      end
+
+      it "returns nil for empty asset_id" do
+        category.save
+        expect(category.asset).to be_nil
+      end
+    end
+
+    context "with benefit" do
+      it "doesn't allow benefit of another user" do
+        user2 = User.create(email: "example@sample.com")
+        benefit = user2.benefits.build(
+          title: "Bike",
+          value: 1000
+        )
+
+        category.benefit_id = benefit.id
+        category.save
+        expect(category).not_to be_valid
+      end
+
+      it "is valid with valid current user benefit" do
+        benefit = user.benefits.build(
+          title: "Bike",
+          value: 1000
+        )
+
+        category.benefit_id = benefit.id
+        category.save
+        expect(category).to be_valid
+      end
+
+      it "returns nil for empty benefit_id" do
+        category.save
+        expect(category.benefit).to be_nil
+      end
     end
 
     context "with category scope" do

@@ -18,7 +18,8 @@ class Category
   validates :title, presence: true, length: { maximum: 255 },
                     uniqueness: { scope: :type, case_sensitive: false }
 
-  validate :goal_belongs_to_this_owner
+  validate :goal_belongs_to_this_owner, :asset_belongs_to_this_owner,
+           :benefit_belongs_to_this_owner
 
   scope :by_income, -> { where(type: SUPER_CATEGORY[:income]) }
   scope :by_expense, -> { where(type: SUPER_CATEGORY[:expense]) }
@@ -49,5 +50,19 @@ class Category
     return true unless goal.nil?
 
     errors.add(:goal_id, "should belong to current user")
+  end
+
+  def asset_belongs_to_this_owner
+    return if asset_id.blank?
+    return true unless asset.nil?
+
+    errors.add(:asset_id, "should belong to current user")
+  end
+
+  def benefit_belongs_to_this_owner
+    return if benefit_id.blank?
+    return true unless benefit.nil?
+
+    errors.add(:benefit_id, "should belong to current user")
   end
 end

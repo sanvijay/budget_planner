@@ -6,7 +6,8 @@ Rails.application.routes.draw do
   }, controllers: {
     sessions: 'sessions',
     registrations: 'registrations',
-    confirmations: 'confirmations'
+    confirmations: 'confirmations',
+    passwords: 'passwords'
   }
 
   resources :users, only: [], param: :user_id do

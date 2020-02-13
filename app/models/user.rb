@@ -5,9 +5,9 @@ class User
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable, :confirmable,
-         :recoverable, :rememberable, :validatable, :trackable,
-         :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
+  devise :database_authenticatable, :registerable, :confirmable, :recoverable,
+         :rememberable, :validatable, :trackable, :jwt_authenticatable,
+         jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
   ## Database authenticatable
   field :email,              type: String, default: ""
@@ -34,8 +34,10 @@ class User
   field :unconfirmed_email,    type: String # Only if using reconfirmable
 
   ## Lockable
-  # field :failed_attempts, type: Integer, default: 0 # Only if lock strategy is :failed_attempts
-  # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
+  # Only if lock strategy is :failed_attempts
+  # field :failed_attempts, type: Integer, default: 0
+  # Only if unlock strategy is :email or :both
+  # field :unlock_token,    type: String
   # field :locked_at,       type: Time
 
   embeds_one :user_profile, autobuild: true

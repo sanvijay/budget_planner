@@ -6,7 +6,7 @@ RSpec.describe ActualCashFlowLog, type: :model do
   let(:monthly_budget)       { user.monthly_budgets.build(month: Date.today) }
   let(:actual_cash_flow_log) { monthly_budget.actual_cash_flow_logs.build(valid_attr) }
 
-  let(:valid_attr) { { category_id: category.id, value: 1000, spent_on: Time.now } }
+  let(:valid_attr) { { description: "Test", category_id: category.id, value: 1000, spent_on: Time.now } }
 
   describe "validations" do
     pending 'does not create record without parent' do
@@ -18,6 +18,8 @@ RSpec.describe ActualCashFlowLog, type: :model do
     end
 
     context "with category_id" do
+      before { monthly_budget.save! }
+
       it 'does not allow empty value' do
         actual_cash_flow_log.category_id = '     '
         expect(actual_cash_flow_log).not_to be_valid
@@ -73,6 +75,7 @@ RSpec.describe ActualCashFlowLog, type: :model do
       end
 
       it 'sets the precision to 2 decimals' do
+        monthly_budget.save!
         actual_cash_flow_log.value = 1234.5678
         actual_cash_flow_log.save
         expect(actual_cash_flow_log.value).to eq 1234.57
@@ -82,6 +85,31 @@ RSpec.describe ActualCashFlowLog, type: :model do
         actual_cash_flow_log.value = 'a'
         expect(actual_cash_flow_log).not_to be_valid
       end
+    end
+  end
+
+  describe "callbacks" do
+    before { monthly_budget.save! }
+
+    it "creates cash_flow if there is none" do
+      expect(monthly_budget.cash_flows.count).to eq 0
+      monthly_budget.actual_cash_flow_logs.create(valid_attr)
+
+      expect(monthly_budget.cash_flows.count).to eq 1
+    end
+
+    it "creates cash_flow for the right category" do
+      monthly_budget.actual_cash_flow_logs.create(valid_attr)
+
+      expect(monthly_budget.cash_flows.first.category_id).to eq monthly_budget.actual_cash_flow_logs.first.category_id
+    end
+
+    it "does not creates cash_flow if there is one" do
+      monthly_budget.cash_flows.create(category_id: category.id, planned: 1000)
+      expect(monthly_budget.cash_flows.count).to eq 1
+      monthly_budget.actual_cash_flow_logs.create(valid_attr)
+
+      expect(monthly_budget.cash_flows.count).to eq 1
     end
   end
 end

@@ -52,4 +52,8 @@ RSpec.describe User, type: :model do
       expect(user.reload.email).to eq mixed_case_email.downcase
     end
   end
+
+  it "returns _id for primary key which is used by devise" do
+    expect(described_class.primary_key).to eq '_id'
+  end
 end
