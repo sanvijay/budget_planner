@@ -15,6 +15,8 @@ class MonthlyBudgetsController < ApplicationController
     first = @user.monthly_budgets.min(:month)
     last  = @user.monthly_budgets.max(:month)
 
+    return render json: [] if first.nil?
+
     first_year = first.month <= 4 ? first.year - 1 : first.year
     last_year  = last.month > 4 ? last.year : last.year - 1
 
