@@ -42,6 +42,12 @@ class Goal
     end
   end
 
+  def actual_cash_flow
+    user.monthly_budgets.of_period(start_date, end_date).inject(0) do |sum, mb|
+      sum + (mb.cash_flows.find_by(category_id: category.id).try(:actual) || 0)
+    end
+  end
+
   private
 
   def set_target_precision

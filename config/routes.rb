@@ -20,6 +20,7 @@ Rails.application.routes.draw do
         resources :cash_flows, only: %i[index create]
         resources :actual_cash_flow_logs, only: %i[create]
       end
+      get 'all_financial_years', to: "monthly_budgets#all_financial_years"
     end
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

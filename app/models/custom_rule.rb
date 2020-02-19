@@ -2,7 +2,8 @@ class CustomRule
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  field :emergency_corpus, type: Float # Current value user possess
+  field :emergency_corpus, type: Float # Target value user possess
+  field :current_emergency_corpus, type: Float # current value user possess
   field :emergency_corpus_score_weightage_out_of_100, type: Integer,
                                                       default: 100
 
@@ -14,6 +15,7 @@ class CustomRule
   validate :valid_user_profile
 
   validates :emergency_corpus, presence: true
+  validates :current_emergency_corpus, presence: true
   validates :outflow_split_percentage, presence: true
 
   # Weightages
@@ -25,7 +27,8 @@ class CustomRule
 
   before_validation :calculate_outflow_split_percentage,
                     :calculate_emergency_corpus
-  before_save :set_emergency_corpus_precision
+  before_save :set_emergency_corpus_precision,
+              :set_current_emergency_corpus_precision
 
   private
 
@@ -41,6 +44,10 @@ class CustomRule
 
   def set_emergency_corpus_precision
     self.emergency_corpus &&= emergency_corpus.round(2)
+  end
+
+  def set_current_emergency_corpus_precision
+    self.current_emergency_corpus &&= current_emergency_corpus.round(2)
   end
 
   def calculate_outflow_split_percentage

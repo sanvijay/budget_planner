@@ -3,7 +3,15 @@ class Category
   include Mongoid::Timestamps
   include Mongoid::Paranoia
 
-  SUPER_CATEGORY = %w[Income Expense EMI EquityInvestment DebtInvestment]
+  INFLOW_SUPER_CATEGORY = %w[Income].freeze
+  OUTFLOW_SUPER_CATEGORY = %w[
+    Expense
+    EMI
+    EquityInvestment
+    DebtInvestment
+  ].freeze
+
+  SUPER_CATEGORY = (INFLOW_SUPER_CATEGORY + OUTFLOW_SUPER_CATEGORY)
                    .map { |cat| [cat.underscore.to_sym, cat] }.to_h
 
   field :title, type: String
@@ -19,7 +27,7 @@ class Category
                     uniqueness: { scope: :type, case_sensitive: false }
 
   validate :goal_belongs_to_this_owner, :asset_belongs_to_this_owner,
-           :benefit_belongs_to_this_owner
+           :benefit_belongs_to_this_owner, :benefit_only_for_expenses
 
   scope :by_income, -> { where(type: SUPER_CATEGORY[:income]) }
   scope :by_expense, -> { where(type: SUPER_CATEGORY[:expense]) }
@@ -64,5 +72,12 @@ class Category
     return true unless benefit.nil?
 
     errors.add(:benefit_id, "should belong to current user")
+  end
+
+  def benefit_only_for_expenses
+    return if benefit_id.blank?
+    return true if INFLOW_SUPER_CATEGORY.exclude?(type)
+
+    errors.add(:benefit_id, "can only be added to expenses")
   end
 end

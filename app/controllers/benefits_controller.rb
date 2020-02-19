@@ -6,6 +6,10 @@ class BenefitsController < ApplicationController
   def index
     @benefits = @user.benefits
 
+    @benefits.each do |b|
+      b[:yearly_total] = b.yearly_total(financial_year: params[:financial_year])
+    end
+
     render json: @benefits
   end
 

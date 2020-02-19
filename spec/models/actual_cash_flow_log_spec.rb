@@ -6,7 +6,7 @@ RSpec.describe ActualCashFlowLog, type: :model do
   let(:monthly_budget)       { user.monthly_budgets.build(month: Date.today) }
   let(:actual_cash_flow_log) { monthly_budget.actual_cash_flow_logs.build(valid_attr) }
 
-  let(:valid_attr) { { description: "Test", category_id: category.id, value: 1000, spent_on: Time.now } }
+  let(:valid_attr) { { description: "Test", category_id: category.id, value: 1000, spent_for: Time.now } }
 
   describe "validations" do
     pending 'does not create record without parent' do
@@ -50,21 +50,21 @@ RSpec.describe ActualCashFlowLog, type: :model do
       end
     end
 
-    context "with spent_on" do
+    context "with spent_for" do
       it 'does not allow empty value' do
-        actual_cash_flow_log.spent_on = '     '
+        actual_cash_flow_log.spent_for = '     '
         expect(actual_cash_flow_log).not_to be_valid
       end
 
       it 'does not allow character' do
-        actual_cash_flow_log.spent_on = 'a'
+        actual_cash_flow_log.spent_for = 'a'
         expect(actual_cash_flow_log).not_to be_valid
       end
 
       pending 'allow integer of certain format' do
-        actual_cash_flow_log.spent_on = 1
+        actual_cash_flow_log.spent_for = 1
         expect(actual_cash_flow_log).to be_valid
-        expect(actual_cash_flow_log.spent_on).to eq Date.new
+        expect(actual_cash_flow_log.spent_for).to eq Date.new
       end
     end
 

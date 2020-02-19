@@ -6,6 +6,13 @@ class AssetsController < ApplicationController
   def index
     @assets = @user.assets
 
+    @assets.each do |asset|
+      asset[:total_cost] = asset.total_cost
+      asset[:yearly_cost] = asset.total_cost(
+        financial_year: params[:financial_year]
+      )
+    end
+
     render json: @assets
   end
 

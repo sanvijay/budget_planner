@@ -7,12 +7,12 @@ class ActualCashFlowLog
 
   field :description, type: String
   field :category_id, type: BSON::ObjectId
-  field :spent_on, type: DateTime
+  field :spent_for, type: DateTime
   field :value, type: Float
 
   validates :description, presence: true, length: { maximum: 50 }
   validates :category_id, presence: true
-  validates :spent_on, presence: true
+  validates :spent_for, presence: true
   validates :value, presence: true, numericality: true
 
   validate :category_belongs_to_this_owner

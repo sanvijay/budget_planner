@@ -18,6 +18,20 @@ class Benefit
     @categories ||= user.categories.where(benefit_id: id)
   end
 
+  def category_ids
+    @category_ids ||= categories.pluck(:id)
+  end
+
+  def yearly_total(financial_year:)
+    value = 0
+    user.monthly_budgets.of_the_financial_year(financial_year.to_i).each do |mb|
+      value += mb.actual_cash_flow_logs.where(:category_id.in => category_ids)
+                 .sum(:value)
+    end
+
+    value
+  end
+
   private
 
   def set_value_precision

@@ -20,7 +20,7 @@ class CashFlow
   end
 
   def actual
-    logs.pluck(:value).reduce(:+) || 0
+    logs.sum(:value)
   end
 
   def logs

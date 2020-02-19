@@ -3,11 +3,22 @@ class MonthlyBudgetsController < ApplicationController
 
   # GET /monthly_budgets
   def index
-    if params[:year].blank?
+    if params[:financial_year].blank?
       render json: { message: "Params: year is required" }, status: :bad_request
     else
       render json: yearly_budgets
     end
+  end
+
+  # GET all_financial_years
+  def all_financial_years
+    first = @user.monthly_budgets.min(:month)
+    last  = @user.monthly_budgets.max(:month)
+
+    first_year = first.month <= 4 ? first.year - 1 : first.year
+    last_year  = last.month > 4 ? last.year : last.year - 1
+
+    render json: (first_year..last_year).to_a
   end
 
   private
@@ -17,7 +28,9 @@ class MonthlyBudgetsController < ApplicationController
   end
 
   def yearly_budgets
-    yearly_budgets = @user.monthly_budgets.of_the_year(params[:year].to_i)
+    yearly_budgets = @user.monthly_budgets.of_the_financial_year(
+      params[:financial_year].to_i
+    )
 
     @results = {}
     yearly_budgets.each do |budget|

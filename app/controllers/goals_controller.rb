@@ -4,7 +4,11 @@ class GoalsController < ApplicationController
 
   # GET /goals
   def index
-    @goals = @user.goals.map { |g| g[:planned] = g.planned_cash_flow; g; } # rubocop:disable Style/Semicolon
+    @goals = @user.goals.map do |g|
+      g[:planned] = g.planned_cash_flow
+      g[:actual] = g.actual_cash_flow
+      g
+    end
 
     render json: @goals
   end
