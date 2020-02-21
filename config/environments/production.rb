@@ -51,14 +51,14 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "budget_planner_production"
 
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { host: APP_CONFIG[:email][:host] }
+  config.action_mailer.default_url_options = { host: Rails.application.credentials[Rails.env.to_sym][:email][:host] }
 
   # SMTP settings for gmail
   config.action_mailer.smtp_settings = {
     :address              => "smtp.gmail.com",
     :port                 => 587,
-    :user_name            => APP_CONFIG[:email][:user_name],
-    :password             => APP_CONFIG[:email][:password],
+    :user_name            => Rails.application.credentials[:email][:user_name],
+    :password             => Rails.application.credentials[:email][:password],
     :authentication       => "plain",
     :enable_starttls_auto => true
   }
