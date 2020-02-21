@@ -51,7 +51,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "budget_planner_production"
 
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { host: Rails.application.credentials[Rails.env.to_sym][:email][:host] }
+  config.action_mailer.default_url_options = { host: Rails.application.credentials[:email][:host] }
 
   # SMTP settings for gmail
   config.action_mailer.smtp_settings = {

@@ -1,16 +1,6 @@
 development:
-  devise_jwt_secret_key: 203ef1a301fee2f47add865f506edb6c4b38aab553ae37bc3e291ada567b353ef3e9c35596473538d6f187f9aaa77ff57fca8144a681202151b5c735a6411722
   browser_base_url: http://localhost:8080/#/
   browser_confirmation_endpoint: email-verified
-  email:
-    host: localhost
-    user_name: test
-    password: password
 test:
-  devise_jwt_secret_key: 777b04d432bb6e6f24dac9405f4ca2302ae3b75ce3bf5f59b082f36a1c934c5ec81e48708d642ff512efaa9e9af4769ddfac40a14a3b2596436dd7e1718341f0
   browser_base_url: http://localhost:8080/#/
   browser_confirmation_endpoint: email-verified
-  email:
-    host: localhost
-    user_name: test
-    password: password
