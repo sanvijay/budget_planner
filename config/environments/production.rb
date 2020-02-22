@@ -50,6 +50,7 @@ Rails.application.configure do
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "budget_planner_production"
 
+  # https://dev.to/morinoko/sending-emails-in-rails-with-action-mailer-and-gmail-35g4
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.default_url_options = { host: Rails.application.credentials[:email][:host] }
 
