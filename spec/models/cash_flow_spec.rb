@@ -73,8 +73,8 @@ RSpec.describe CashFlow, type: :model do
       end
 
       it 'returns the sum when there are logs' do
-        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_for: Time.now, description: "Test")
-        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_for: Time.now, description: "Test")
+        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_on: Time.now, description: "Test")
+        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_on: Time.now, description: "Test")
 
         expect(cash_flow.actual).to eq 2000.0
       end

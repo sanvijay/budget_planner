@@ -42,7 +42,7 @@ class ActualCashFlowLogsController < ApplicationController
     params.require(:actual_cash_flow_log).permit(
       :description,
       :value,
-      :spent_for,
+      :spent_on,
       :category_id
     )
   end
