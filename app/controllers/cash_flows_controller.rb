@@ -1,6 +1,8 @@
 class CashFlowsController < ApplicationController
-  before_action :set_user, :set_monthly_budget
-  before_action :set_category, :set_cash_flows, only: %i[create]
+  before_action :set_user
+  before_action :set_monthly_budget, except: %i[create_batch]
+  before_action :set_category, except: %i[index]
+  before_action :set_cash_flows, only: %i[create]
 
   # GET /cash_flows
   def index
@@ -25,6 +27,20 @@ class CashFlowsController < ApplicationController
     end
   end
 
+  # This is only for expected cashflow
+  # If record is already there, update it.
+  def create_batch
+    all_months.each do |month|
+      cash_flow = monthly_budget(month).cash_flows.find_by(category_id: @category.id) ||
+                  monthly_budget(month).cash_flows.build(category_id: @category.id)
+
+      cash_flow.planned = cash_flow_params[:value]
+      cash_flow.save!
+    end
+
+    render plain: 'true', status: :created
+  end
+
   private
 
   def set_user
@@ -40,6 +56,18 @@ class CashFlowsController < ApplicationController
         message: "Params: monthly_budget_id should be of format MMYYYY"
       }, status: :bad_request
     end
+  end
+
+  def monthly_budget(month)
+    date = month
+    monthly_budget = @user.monthly_budgets.of_the_month(date).first ||
+                        @user.monthly_budgets.create!(month: date)
+  end
+
+  def all_months
+    start_date = Date.parse(cash_flow_params[:from])
+    end_date = Date.parse(cash_flow_params[:to])
+    (start_date..end_date).to_a.group_by(&:month).values.map(&:first)
   end
 
   def parse_date

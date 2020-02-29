@@ -20,6 +20,9 @@ Rails.application.routes.draw do
       resources :monthly_budgets, except: %i[show update destroy] do
         resources :cash_flows, only: %i[index create]
         resources :actual_cash_flow_logs, only: %i[create]
+        collection do
+          post 'create_planned_cash_flow_batch', to: "cash_flows#create_batch"
+        end
       end
       get 'all_financial_years', to: "monthly_budgets#all_financial_years"
     end
