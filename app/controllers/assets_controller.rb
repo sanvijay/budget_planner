@@ -25,6 +25,9 @@ class AssetsController < ApplicationController
   def create
     @asset = @user.assets.build(asset_params)
 
+    @asset[:total_cost] = { inflow: 0, outflow: 0 }
+    @asset[:yearly_cost] = { inflow: 0, outflow: 0 }
+
     if @asset.save
       render json: @asset, status: :created
     else
