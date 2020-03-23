@@ -136,6 +136,7 @@ RSpec.describe Category, type: :model do
       end
 
       it "is valid with valid current user benefit" do
+        category.type = "EquityInvestment"
         benefit = user.benefits.build(
           title: "Bike",
           value: 1000
@@ -144,6 +145,18 @@ RSpec.describe Category, type: :model do
         category.benefit_id = benefit.id
         category.save
         expect(category).to be_valid
+      end
+
+      it "is not valid with Income category type" do
+        category.type = "Income"
+        benefit = user.benefits.build(
+          title: "Bike",
+          value: 1000
+        )
+
+        category.benefit_id = benefit.id
+        category.save
+        expect(category).not_to be_valid
       end
 
       it "returns nil for empty benefit_id" do

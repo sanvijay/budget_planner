@@ -36,7 +36,7 @@ class Asset
 
   def outflow_category_ids
     @outflow_category_ids ||= categories.where(
-      :type.in => Category::INFLOW_SUPER_CATEGORY
+      :type.in => Category::OUTFLOW_SUPER_CATEGORY
     ).pluck(:id)
   end
 
@@ -61,7 +61,7 @@ class Asset
 
   private
 
-  def all_monthly_budgets(financial_year)
+  def all_monthly_budgets(financial_year = nil)
     if financial_year
       user.monthly_budgets.of_the_financial_year(financial_year.to_i)
     else

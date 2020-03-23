@@ -1,15 +1,7 @@
 class CashFlowsController < ApplicationController
-  before_action :set_user
+  before_action :set_user, :set_category
   before_action :set_monthly_budget, except: %i[create_batch]
-  before_action :set_category, except: %i[index]
   before_action :set_cash_flows, only: %i[create]
-
-  # GET /cash_flows
-  def index
-    @cash_flows = calculate_all_cash_flows
-
-    render json: @cash_flows
-  end
 
   # This is only for expected cashflow
   # If record is already there, update it.
@@ -31,8 +23,7 @@ class CashFlowsController < ApplicationController
   # If record is already there, update it.
   def create_batch
     all_months.each do |month|
-      cash_flow = monthly_budget(month).cash_flows.find_by(category_id: @category.id) ||
-                  monthly_budget(month).cash_flows.build(category_id: @category.id)
+      cash_flow = find_or_build_cash_flow(month, @category.id)
 
       cash_flow.planned = cash_flow_params[:value]
       cash_flow.save!
@@ -42,6 +33,11 @@ class CashFlowsController < ApplicationController
   end
 
   private
+
+  def find_or_build_cash_flow(month, category_id)
+    monthly_budget(month).cash_flows.find_by(category_id: category_id) ||
+      monthly_budget(month).cash_flows.build(category_id: category_id)
+  end
 
   def set_user
     @user = User.find(params[:user_id])
@@ -60,8 +56,8 @@ class CashFlowsController < ApplicationController
 
   def monthly_budget(month)
     date = month
-    monthly_budget = @user.monthly_budgets.of_the_month(date).first ||
-                        @user.monthly_budgets.create!(month: date)
+    @user.monthly_budgets.of_the_month(date).first ||
+      @user.monthly_budgets.create!(month: date)
   end
 
   def all_months
@@ -94,19 +90,5 @@ class CashFlowsController < ApplicationController
 
   def cash_flow_params
     params[:cash_flow]
-  end
-
-  def calculate_all_cash_flows
-    if params[:filter].blank? || params[:filter] == 'all'
-      { expected: @monthly_budget.planned_cash_flows,
-        actual: @monthly_budget.actual_cash_flows }
-
-    elsif params[:filter] == 'expected'
-      { expected: @monthly_budget.planned_cash_flows }
-
-    elsif params[:filter] == 'actual'
-      { actual: @monthly_budget.actual_cash_flows }
-
-    end
   end
 end

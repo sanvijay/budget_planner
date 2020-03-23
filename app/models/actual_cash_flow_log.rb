@@ -1,7 +1,6 @@
 class ActualCashFlowLog
   include Mongoid::Document
   include Mongoid::Timestamps
-  include Mongoid::Paranoia
 
   embedded_in :monthly_budget
 

@@ -7,24 +7,25 @@ RSpec.describe AssetsController, type: :controller do
   let(:valid_attributes)   { { title: "House", value: 1000 } }
   let(:invalid_attributes) { { title: "     ", value: "test" } }
 
-  let(:user)       { User.new(email: "sample@example.com") }
-  let(:asset)      { user.assets.build(valid_attributes) }
+  let(:user)  { User.new(email: "sample@example.com", password: "Qweasd12!") }
+  let(:asset) { user.assets.build(valid_attributes) }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # AssetsController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
+  let(:headers)       { { 'Accept' => 'application/json', 'Content-Type' => 'application/json' } }
+  let(:valid_session) {}
 
   describe "GET #index" do
     before { asset.save! }
 
     it "returns a success response" do
-      get :index, params: { user_id: user.to_param }, session: valid_session
+      get :index, params: { user_id: user.to_param }
       expect(response).to be_successful
     end
 
     it "returns a JSON response with assets" do
-      get :index, params: { user_id: user.to_param }, session: valid_session
+      get :index, params: { user_id: user.to_param }
 
       response_body = JSON.parse(response.body)
       expect(response_body.count).to eq 1
@@ -36,7 +37,7 @@ RSpec.describe AssetsController, type: :controller do
   describe "GET #show" do
     it "returns a success response" do
       asset.save!
-      get :show, params: { user_id: user.to_param, id: asset.to_param }, session: valid_session
+      get :show, params: { user_id: user.to_param, id: asset.to_param }
       expect(response).to be_successful
 
       response_body = JSON.parse(response.body)
@@ -51,7 +52,7 @@ RSpec.describe AssetsController, type: :controller do
     context "with valid params" do
       it "creates a new Asset" do
         before_count = user.assets.count
-        post :create, params: { user_id: user.to_param, asset: valid_attributes }, session: valid_session
+        post :create, params: { user_id: user.to_param, asset: valid_attributes }
         user.reload
         after_count = user.assets.count
 
@@ -59,7 +60,7 @@ RSpec.describe AssetsController, type: :controller do
       end
 
       it "renders a JSON response with the new asset" do
-        post :create, params: { user_id: user.to_param, asset: valid_attributes }, session: valid_session
+        post :create, params: { user_id: user.to_param, asset: valid_attributes }
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
@@ -67,7 +68,7 @@ RSpec.describe AssetsController, type: :controller do
 
     context "with invalid params" do
       it "renders a JSON response with errors for the new asset" do
-        post :create, params: { user_id: user.to_param, asset: invalid_attributes }, session: valid_session
+        post :create, params: { user_id: user.to_param, asset: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
@@ -83,14 +84,14 @@ RSpec.describe AssetsController, type: :controller do
       end
 
       it "updates the requested asset" do
-        put :update, params: { user_id: user.to_param, id: asset.to_param, asset: new_attributes }, session: valid_session
+        put :update, params: { user_id: user.to_param, id: asset.to_param, asset: new_attributes }
         asset.reload
         expect(asset.title).to eq new_attributes[:title]
         expect(asset.value).to eq new_attributes[:value]
       end
 
       it "renders a JSON response with the asset" do
-        put :update, params: { user_id: user.to_param, id: asset.to_param, asset: new_attributes }, session: valid_session
+        put :update, params: { user_id: user.to_param, id: asset.to_param, asset: new_attributes }
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
@@ -98,7 +99,7 @@ RSpec.describe AssetsController, type: :controller do
 
     context "with invalid params" do
       it "renders a JSON response with errors for the asset" do
-        put :update, params: { user_id: user.to_param, id: asset.to_param, asset: invalid_attributes }, session: valid_session
+        put :update, params: { user_id: user.to_param, id: asset.to_param, asset: invalid_attributes }
         asset.reload
         expect(response).to have_http_status(:unprocessable_entity)
         expect(asset.title).to eq valid_attributes[:title]
@@ -111,7 +112,7 @@ RSpec.describe AssetsController, type: :controller do
     it "destroys the requested asset" do
       asset.save!
       before_count = user.assets.count
-      delete :destroy, params: { user_id: user.to_param, id: asset.to_param }, session: valid_session
+      delete :destroy, params: { user_id: user.to_param, id: asset.to_param }
       user.reload
       after_count = user.assets.count
 

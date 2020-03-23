@@ -7,7 +7,7 @@ RSpec.describe BenefitsController, type: :controller do
   let(:valid_attributes)   { { title: "House", value: 1000 } }
   let(:invalid_attributes) { { title: "     ", value: "test" } }
 
-  let(:user)    { User.new(email: "sample@example.com") }
+  let(:user)    { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:benefit) { user.benefits.build(valid_attributes) }
 
   # This should return the minimal set of values that should be in the session

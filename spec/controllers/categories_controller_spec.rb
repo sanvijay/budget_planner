@@ -7,7 +7,7 @@ RSpec.describe CategoriesController, type: :controller do
   let(:valid_attributes)   { { title: "House Rent", type: "Expense" } }
   let(:invalid_attributes) { { title: "          ", type: "       " } }
 
-  let(:user)     { User.new(email: "sample@example.com") }
+  let(:user)     { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:category) { user.categories.build(valid_attributes) }
 
   # This should return the minimal set of values that should be in the session

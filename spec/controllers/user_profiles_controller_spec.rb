@@ -23,7 +23,7 @@ RSpec.describe UserProfilesController, type: :controller do
     }
   end
 
-  let(:user)         { User.create(email: "sample@example.com") }
+  let(:user)         { User.create(email: "sample@example.com", password: "Qweasd12!") }
   let(:user_profile) { user.build_user_profile(valid_attributes) }
 
   # This should return the minimal set of values that should be in the session

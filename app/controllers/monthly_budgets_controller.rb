@@ -4,7 +4,8 @@ class MonthlyBudgetsController < ApplicationController
   # GET /monthly_budgets
   def index
     if params[:financial_year].blank?
-      render json: { message: "Params: year is required" }, status: :bad_request
+      render json: { message: "Params: financial_year is required" },
+             status: :bad_request
     else
       render json: yearly_budgets
     end

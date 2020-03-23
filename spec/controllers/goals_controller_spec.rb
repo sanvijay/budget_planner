@@ -23,13 +23,13 @@ RSpec.describe GoalsController, type: :controller do
     }
   end
 
-  let(:user) { User.new(email: "sample@example.com") }
+  let(:user) { User.create(email: "sample@example.com", password: "Qweasd12!") }
   let(:goal) { user.goals.build(valid_attributes) }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # GoalsController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
+  let(:valid_session) {}
 
   describe "GET #index" do
     before { goal.save! }

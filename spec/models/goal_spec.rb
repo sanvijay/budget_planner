@@ -179,4 +179,24 @@ RSpec.describe Goal, type: :model do
     it "returns the value that is calculated for that period even after changes"
     it "does not compute the value that is not in that period"
   end
+
+  describe "#actual_cash_flow" do
+    let(:monthly_budget)       { user.monthly_budgets.build(month: Date.today) }
+    let(:log_attr)             { { description: "Test", category_id: goal.category.id, value: 100, spent_on: Time.now } }
+    let(:actual_cash_flow_log) { monthly_budget.actual_cash_flow_logs.build(log_attr) }
+
+    it "returns 0 where there are no expenses tracked for this goal" do
+      goal.save!
+      expect(goal.actual_cash_flow).to eq 0
+    end
+
+    it "returns the value tracked for that goal" do
+      monthly_budget.save!
+      goal.save!
+      actual_cash_flow_log.save!
+      expect(goal.actual_cash_flow).to eq 100
+    end
+
+    it "does not compute the value that is not in that period"
+  end
 end
