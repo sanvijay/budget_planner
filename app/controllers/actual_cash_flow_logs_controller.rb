@@ -1,5 +1,7 @@
 class ActualCashFlowLogsController < ApplicationController
-  before_action :set_user, :set_monthly_budget
+  before_action :set_user
+  before_action :set_monthly_budget, except: %i[index_batch]
+  before_action :set_acfl, only: %i[destroy]
 
   # POST /actual_cash_flow_logs
   def create
@@ -13,7 +15,40 @@ class ActualCashFlowLogsController < ApplicationController
     end
   end
 
+  def index
+    @actual_cash_flow_logs = @monthly_budget.actual_cash_flow_logs
+
+    render json: @actual_cash_flow_logs
+  end
+
+  def index_batch
+    if params[:financial_year].blank?
+      render json: { message: "Params: financial_year is required" },
+             status: :bad_request
+    else
+      render json: yearly_logs
+    end
+  end
+
+  def destroy
+    @acfl.destroy
+  end
+
   private
+
+  def yearly_logs
+    yearly_budgets = @user.monthly_budgets.of_the_financial_year(
+      params[:financial_year].to_i
+    )
+
+    results = {}
+    yearly_budgets.each do |budget|
+      results[budget.month.year] ||= {}
+      results[budget.month.year][budget.month.month] = budget.actual_cash_flow_logs.order_by(spent_on: :desc)
+    end
+
+    results
+  end
 
   def set_user
     @user = User.find(params[:user_id])
@@ -28,6 +63,11 @@ class ActualCashFlowLogsController < ApplicationController
         message: "Params: monthly_budget_id should be of format MMYYYY"
       }, status: :bad_request
     end
+  end
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_acfl
+    @acfl = @monthly_budget.actual_cash_flow_logs.find(params[:id])
   end
 
   def parse_date
