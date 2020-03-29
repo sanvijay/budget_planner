@@ -43,9 +43,9 @@ role :app, target_app_hosts
 # Global options
 # --------------
 set :ssh_options, {
-    user: 'ec2-user',
-    auth_methods: %w(publickey),
-    keys: %w(~/Downloads/budget-planner-aws.pem)
+  user: 'ec2-user',
+  auth_methods: %w(publickey),
+  keys: %w(~/Downloads/budget-planner-aws.pem)
 }
 
 #
