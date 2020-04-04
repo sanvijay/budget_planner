@@ -19,11 +19,6 @@
 # role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
 # role :db,  %w{deploy@example.com}
 
-set :default_app_hosts, %w{34.212.78.243}
-
-target_app_hosts = ENV.has_key?('TARGET_APP_HOSTS') ? ENV['TARGET_APP_HOSTS'].split(',') : fetch(:default_app_hosts)
-role :app, target_app_hosts
-
 # Configuration
 # =============
 # You can set any configuration variable like in config/deploy.rb
@@ -42,11 +37,6 @@ role :app, target_app_hosts
 #
 # Global options
 # --------------
-set :ssh_options, {
-  user: 'ec2-user',
-  auth_methods: %w(publickey),
-  keys: %w(~/Downloads/budget-planner-aws.pem)
-}
 
 #
 # The server-based syntax can be used to override options:
@@ -61,3 +51,11 @@ set :ssh_options, {
 #     auth_methods: %w(publickey password)
 #     # password: 'please use keys'
 #   }
+server '34.212.78.243',
+  user: 'ec2-user',
+  roles: %w{web app db},
+  ssh_options: {
+    user: 'ec2-user',
+    auth_methods: %w(publickey),
+    keys: %w(~/.ssh/budget-planner-aws.pem)
+  }
