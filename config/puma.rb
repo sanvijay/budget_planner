@@ -1,7 +1,3 @@
-# Change to match your CPU core count
-# grep -c processor /proc/cpuinfo
-workers 1
-
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers: a minimum and maximum.
 # Any libraries that use thread pools should be configured to match
@@ -12,9 +8,13 @@ max_threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
 min_threads_count = ENV.fetch("RAILS_MIN_THREADS") { max_threads_count }
 threads min_threads_count, max_threads_count
 
+# Specifies the `port` that Puma will listen on to receive requests; default is 3000.
+#
+port        ENV.fetch("PORT") { 3000 }
+
 # Specifies the `environment` that Puma will run in.
 #
-environment ENV.fetch("RAILS_ENV") { "production" }
+environment ENV.fetch("RAILS_ENV") { "development" }
 
 # Specifies the `pidfile` that Puma will use.
 pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
@@ -36,22 +36,3 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
-
-app_dir = File.expand_path("../..", __FILE__)
-shared_dir = "#{app_dir}/shared"
-
-# Set up socket location
-bind "unix://#{shared_dir}/tmp/sockets/puma.sock"
-
-# Set master PID and state locations
-state_path "#{shared_dir}/tmp/pids/puma.state"
-
-# Logging
-stdout_redirect "#{shared_dir}/log/puma.stdout.log", "#{shared_dir}/log/puma.stderr.log", true
-
-prune_bundler
-
-on_restart do
-  puts 'Refreshing Gemfile'
-  ENV["BUNDLE_GEMFILE"] = "/var/www/apps/budget_planner/current/Gemfile"
-end
