@@ -32,6 +32,7 @@ class UserProfilesController < ApplicationController
       :last_name,
       :dob,
       :gender,
+      { expense_ratio: {} },
       :monthly_income
     )
   end

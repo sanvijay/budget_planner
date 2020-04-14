@@ -37,17 +37,20 @@ class ActualCashFlowLogsController < ApplicationController
   private
 
   def yearly_logs
-    yearly_budgets = @user.monthly_budgets.of_the_financial_year(
-      params[:financial_year].to_i
-    )
-
     results = {}
     yearly_budgets.each do |budget|
       results[budget.month.year] ||= {}
-      results[budget.month.year][budget.month.month] = budget.actual_cash_flow_logs.order_by(spent_on: :desc)
+      results[budget.month.year][budget.month.month] =
+        budget.actual_cash_flow_logs.order_by(spent_on: :desc)
     end
 
     results
+  end
+
+  def yearly_budgets
+    @user.monthly_budgets.of_the_financial_year(
+      params[:financial_year].to_i
+    )
   end
 
   def set_user

@@ -9,7 +9,8 @@ RSpec.describe UserProfile, type: :model do
       first_name: "Bike",
       last_name: "Racer",
       dob: Date.today - 1.days,
-      gender: "Male"
+      gender: "Male",
+      expense_ratio: { expense: 30, emi: 40, equity_investment: 10, debt_investment: 20 }
     }
   end
 
@@ -64,6 +65,34 @@ RSpec.describe UserProfile, type: :model do
       end
     end
 
+    it "does not allow empty expense_ratio" do
+      user_profile.expense_ratio = nil
+      expect(user_profile).not_to be_valid
+    end
+
+    it "does not allow empty array as expense_ratio" do
+      user_profile.expense_ratio = {}
+      expect(user_profile).not_to be_valid
+      expect(user_profile.errors[:expense_ratio]).not_to eq("should adds to 100")
+    end
+
+    it "does not allow array which sums to non-100 as expense_ratio" do
+      user_profile.expense_ratio = { expense: 0, emi: 10, equity_investment: 20, debt_investment: 30 }
+      expect(user_profile).not_to be_valid
+      expect(user_profile.errors[:expense_ratio]).not_to eq("should adds to 100")
+    end
+
+    it "does not allow array with non-4 count as expense_ratio" do
+      user_profile.expense_ratio = { expense: 0, emi: 10, equity_investment: 20, debt_investment: 30, test: 200 }
+      expect(user_profile).not_to be_valid
+      expect(user_profile.errors[:expense_ratio]).not_to eq("should have 4 numbers")
+    end
+
+    it "is valid with string expense_ratio" do
+      user_profile.expense_ratio = { expense: "39.5", emi: 10.5, equity_investment: "20", debt_investment: 30 }
+      expect(user_profile).to be_valid
+    end
+
     it "does not allow gender other than provider list" do
       ["Test", 123, Date.today].each do |invalid_gender|
         user_profile.gender = invalid_gender
@@ -73,6 +102,18 @@ RSpec.describe UserProfile, type: :model do
   end
 
   describe "call backs" do
+    it "sets the numeric string array to numeric array as expense_ratio" do
+      user_profile.expense_ratio = { expense: "40", emi: 10, equity_investment: "20", debt_investment: 30 }
+      user_profile.valid?
+      expect(user_profile.expense_ratio).to eq(expense: 40, emi: 10, equity_investment: 20, debt_investment: 30)
+    end
+
+    it "sets the non-numeric array to numeric array as expense_ratio" do
+      user_profile.expense_ratio = { expense: "test", emi: "test", equity_investment: "test", debt_investment: "test" }
+      user_profile.valid?
+      expect(user_profile.expense_ratio.values).to eq([0, 0, 0, 0])
+    end
+
     it 'sets the precision only if monthly_income present' do
       user_profile.monthly_income = nil
       user_profile.save
