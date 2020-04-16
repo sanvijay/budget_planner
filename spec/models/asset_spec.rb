@@ -136,6 +136,8 @@ RSpec.describe Asset, type: :model do
 
       expect(asset.inflow_actual_cash_flow_logs(financial_year: 1991)).to eq 100
     end
+
+    pending "returns the total for the overall years"
   end
 
   describe "#outflow_actual_cash_flow_logs" do
@@ -164,6 +166,8 @@ RSpec.describe Asset, type: :model do
 
       expect(asset.outflow_actual_cash_flow_logs(financial_year: 1991)).to eq 200
     end
+
+    pending "returns the total for the overall years"
   end
 
   describe "#total_cost" do

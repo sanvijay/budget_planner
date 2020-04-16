@@ -26,7 +26,7 @@ class Asset
   def inflow_actual_cash_flow_logs(financial_year: nil)
     value = 0
 
-    all_monthly_budgets(financial_year.to_i).each do |mb|
+    all_monthly_budgets(financial_year).each do |mb|
       value += mb.actual_cash_flow_logs.where(
         :category_id.in => inflow_category_ids
       ).sum(:value)
@@ -43,7 +43,7 @@ class Asset
   def outflow_actual_cash_flow_logs(financial_year: nil)
     value = 0
 
-    all_monthly_budgets(financial_year.to_i).each do |mb|
+    all_monthly_budgets(financial_year).each do |mb|
       value += mb.actual_cash_flow_logs.where(
         :category_id.in => outflow_category_ids
       ).sum(:value)
