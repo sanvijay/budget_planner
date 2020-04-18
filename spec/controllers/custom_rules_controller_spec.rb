@@ -23,7 +23,7 @@ RSpec.describe CustomRulesController, type: :controller do
     {
       first_name: "Bike",
       last_name: "Racer",
-      dob: Date.today - 1.days,
+      dob: Time.zone.today - 1.day,
       gender: "Male"
     }
   end

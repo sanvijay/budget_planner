@@ -3,7 +3,7 @@ class UserProfile
   include Mongoid::Timestamps
 
   GENDERS = %w[Male Female Androgyny]
-            .map { |gender| [gender.underscore.to_sym, gender] }.to_h
+            .index_by { |gender| gender.underscore.to_sym }
 
   field :first_name, type: String
   field :last_name, type: String
@@ -41,12 +41,12 @@ class UserProfile
   def age
     return 0 if dob.nil?
 
-    @age ||= Date.today.year - dob.year
+    @age ||= Time.zone.today.year - dob.year
   end
 
   def dob_to_be_in_past
     return if dob.nil?
-    return true if dob < Date.today
+    return true if dob < Time.zone.today
 
     errors.add(:dob, "should be in past")
   end

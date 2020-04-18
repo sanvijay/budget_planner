@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CashFlow, type: :model do
   let(:user)             { User.create(email: "sample@example.com", password: "Qweasd12!") }
   let(:category)         { user.categories.create(title: "House Rent", type: "Expense") }
-  let(:monthly_budget)   { user.monthly_budgets.build(month: Date.today) }
+  let(:monthly_budget)   { user.monthly_budgets.build(month: Time.zone.today) }
   let(:cash_flow)        { monthly_budget.cash_flows.build(category_id: category.id, planned: 1000) }
 
   let(:valid_attr) { { category_id: category.id, planned: 1000 } }
@@ -73,8 +73,8 @@ RSpec.describe CashFlow, type: :model do
       end
 
       it 'returns the sum when there are logs' do
-        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_on: Time.now, description: "Test")
-        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_on: Time.now, description: "Test")
+        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_on: Time.zone.now, description: "Test")
+        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_on: Time.zone.now, description: "Test")
 
         expect(cash_flow.actual).to eq 2000.0
       end

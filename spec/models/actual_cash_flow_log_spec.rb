@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe ActualCashFlowLog, type: :model do
   let(:user)                 { User.create(email: "sample@example.com", password: "Qweasd12!") }
   let(:category)             { user.categories.create(title: "House Rent", type: "Expense") }
-  let(:monthly_budget)       { user.monthly_budgets.build(month: Date.today) }
+  let(:monthly_budget)       { user.monthly_budgets.build(month: Time.zone.today) }
   let(:actual_cash_flow_log) { monthly_budget.actual_cash_flow_logs.build(valid_attr) }
 
-  let(:valid_attr) { { description: "Test", category_id: category.id, value: 1000, spent_on: Time.now } }
+  let(:valid_attr) { { description: "Test", category_id: category.id, value: 1000, spent_on: Time.zone.now } }
 
   describe "validations" do
     pending 'does not create record without parent' do

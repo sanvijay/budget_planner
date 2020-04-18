@@ -8,7 +8,7 @@ RSpec.describe UserProfilesController, type: :controller do
     {
       first_name: "Bike",
       last_name: "Racer",
-      dob: Date.today - 1.days,
+      dob: Time.zone.today - 1.day,
       gender: "Male",
       monthly_income: nil
     }
@@ -18,7 +18,7 @@ RSpec.describe UserProfilesController, type: :controller do
     {
       first_name: "  ",
       last_name: "  ",
-      dob: Date.today + 1.days,
+      dob: Time.zone.today + 1.day,
       gender: 123
     }
   end

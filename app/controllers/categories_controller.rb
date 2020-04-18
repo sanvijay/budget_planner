@@ -59,7 +59,7 @@ class CategoriesController < ApplicationController
 
   def grouped_categories
     Category::SUPER_CATEGORY.values
-    results = Category::SUPER_CATEGORY.values.map { |e| [e, []] }.to_h
+    results = Category::SUPER_CATEGORY.values.index_with { |_e| [] }
     @user.categories.each do |category|
       results[category.type] ||= []
       results[category.type].push(category_hash(category))

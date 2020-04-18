@@ -8,7 +8,7 @@ RSpec.describe UserProfile, type: :model do
     {
       first_name: "Bike",
       last_name: "Racer",
-      dob: Date.today - 1.days,
+      dob: Time.zone.today - 1.day,
       gender: "Male",
       expense_ratio: { expense: 30, emi: 40, equity_investment: 10, debt_investment: 20 }
     }
@@ -49,7 +49,7 @@ RSpec.describe UserProfile, type: :model do
     end
 
     it 'does not allow future dob' do
-      user_profile.dob = Date.today + 1.days
+      user_profile.dob = Time.zone.today + 1.day
       expect(user_profile).not_to be_valid
     end
 
@@ -94,7 +94,7 @@ RSpec.describe UserProfile, type: :model do
     end
 
     it "does not allow gender other than provider list" do
-      ["Test", 123, Date.today].each do |invalid_gender|
+      ["Test", 123, Time.zone.today].each do |invalid_gender|
         user_profile.gender = invalid_gender
         expect(user_profile).not_to be_valid
       end
@@ -129,7 +129,7 @@ RSpec.describe UserProfile, type: :model do
 
   describe "#age" do
     it 'calculates the age' do
-      user_profile.dob = Date.today - 27.years
+      user_profile.dob = Time.zone.today - 27.years
       expect(user_profile.age).to eq 27
     end
 

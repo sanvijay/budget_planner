@@ -16,7 +16,9 @@ AllCops:
     - 'vendor/**/*'
     - 'bin/**/*'
 
-require: rubocop-rspec
+require:
+  - rubocop-rails
+  - rubocop-rspec
 
 Style/Documentation:
   Enabled: false

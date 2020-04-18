@@ -8,8 +8,8 @@ RSpec.describe GoalsController, type: :controller do
     {
       description: "Bike",
       target: 1000,
-      start_date: Date.today,
-      end_date: Date.today + 1,
+      start_date: Time.zone.today,
+      end_date: Time.zone.today + 1,
       score_weightage_out_of_100: 10
     }
   end
@@ -18,8 +18,8 @@ RSpec.describe GoalsController, type: :controller do
     {
       description: "   ",
       target: 'test',
-      start_date: Date.today,
-      end_date: Date.today
+      start_date: Time.zone.today,
+      end_date: Time.zone.today
     }
   end
 
@@ -49,8 +49,8 @@ RSpec.describe GoalsController, type: :controller do
       validate_attr = response_body[0].slice(*slice_keys)
       expect(validate_attr).to eq(
         "description" => "Bike",
-        "end_date" => (Date.today + 1).to_s,
-        "start_date" => Date.today.to_s,
+        "end_date" => (Time.zone.today + 1).to_s,
+        "start_date" => Time.zone.today.to_s,
         "target" => 1000.0,
         "planned" => 1000.0,
         "score_weightage_out_of_100" => 10
@@ -69,8 +69,8 @@ RSpec.describe GoalsController, type: :controller do
       validate_attr = response_body.slice(*slice_keys)
       expect(validate_attr).to eq(
         "description" => "Bike",
-        "end_date" => (Date.today + 1).to_s,
-        "start_date" => Date.today.to_s,
+        "end_date" => (Time.zone.today + 1).to_s,
+        "start_date" => Time.zone.today.to_s,
         "target" => 1000.0,
         "score_weightage_out_of_100" => 10
       )
@@ -98,8 +98,8 @@ RSpec.describe GoalsController, type: :controller do
         validate_attr = response_body.slice(*slice_keys)
         expect(validate_attr).to eq(
           "description" => "Bike",
-          "end_date" => (Date.today + 1).to_s,
-          "start_date" => Date.today.to_s,
+          "end_date" => (Time.zone.today + 1).to_s,
+          "start_date" => Time.zone.today.to_s,
           "target" => 1000.0,
           "planned" => 1000.0,
           "score_weightage_out_of_100" => 10

@@ -46,7 +46,7 @@ class User
   embeds_many :assets
   embeds_many :categories
   embeds_many :benefits
-  has_many :monthly_budgets
+  has_many :monthly_budgets, dependent: :destroy
 
   # Validation for email
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i.freeze

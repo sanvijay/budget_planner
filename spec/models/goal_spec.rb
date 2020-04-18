@@ -8,8 +8,8 @@ RSpec.describe Goal, type: :model do
     {
       description: "Bike",
       target: 1000,
-      start_date: Date.today,
-      end_date: Date.today + 1
+      start_date: Time.zone.today,
+      end_date: Time.zone.today + 1
     }
   end
 
@@ -103,15 +103,15 @@ RSpec.describe Goal, type: :model do
       end
 
       it 'only allows start_date < end_date' do
-        goal.start_date = Date.today + 1
-        goal.end_date = Date.today
+        goal.start_date = Time.zone.today + 1
+        goal.end_date = Time.zone.today
 
         expect(goal).not_to be_valid
       end
 
       it 'does not allow start_date = end_date' do
-        goal.start_date = Date.today
-        goal.end_date = Date.today
+        goal.start_date = Time.zone.today
+        goal.end_date = Time.zone.today
 
         expect(goal).not_to be_valid
       end
@@ -181,8 +181,8 @@ RSpec.describe Goal, type: :model do
   end
 
   describe "#actual_cash_flow" do
-    let(:monthly_budget)       { user.monthly_budgets.build(month: Date.today) }
-    let(:log_attr)             { { description: "Test", category_id: goal.category.id, value: 100, spent_on: Time.now } }
+    let(:monthly_budget)       { user.monthly_budgets.build(month: Time.zone.today) }
+    let(:log_attr)             { { description: "Test", category_id: goal.category.id, value: 100, spent_on: Time.zone.now } }
     let(:actual_cash_flow_log) { monthly_budget.actual_cash_flow_logs.build(log_attr) }
 
     it "returns 0 where there are no expenses tracked for this goal" do

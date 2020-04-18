@@ -12,7 +12,7 @@ class Category
   ].freeze
 
   SUPER_CATEGORY = (INFLOW_SUPER_CATEGORY + OUTFLOW_SUPER_CATEGORY)
-                   .map { |cat| [cat.underscore.to_sym, cat] }.to_h
+                   .index_by { |cat| cat.underscore.to_sym }
 
   field :title, type: String
   field :type, type: String

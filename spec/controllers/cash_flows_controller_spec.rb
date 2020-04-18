@@ -9,7 +9,7 @@ RSpec.describe CashFlowsController, type: :controller do
 
   let(:user)               { User.create(email: "sample@example.com", password: "Qweasd12!") }
   let(:category)           { user.categories.create(title: "House Rent", type: "Expense") }
-  let(:monthly_budget)     { user.monthly_budgets.build(month: Date.today.to_s) }
+  let(:monthly_budget)     { user.monthly_budgets.build(month: Time.zone.today.to_s) }
   let(:cash_flow)          { monthly_budget.cash_flows.build(valid_attributes) }
 
   # This should return the minimal set of values that should be in the session

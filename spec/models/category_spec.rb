@@ -64,8 +64,8 @@ RSpec.describe Category, type: :model do
         goal = user2.goals.build(
           description: "Bike",
           target: 1000,
-          start_date: Date.today,
-          end_date: Date.today + 1
+          start_date: Time.zone.today,
+          end_date: Time.zone.today + 1
         )
 
         category.goal_id = goal.id
@@ -77,8 +77,8 @@ RSpec.describe Category, type: :model do
         goal = user.goals.build(
           description: "Bike",
           target: 1000,
-          start_date: Date.today,
-          end_date: Date.today + 1
+          start_date: Time.zone.today,
+          end_date: Time.zone.today + 1
         )
 
         category.goal_id = goal.id
