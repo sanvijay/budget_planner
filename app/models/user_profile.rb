@@ -16,6 +16,7 @@ class UserProfile
     debt_investment: 20
   }
   field :monthly_income, type: Float
+  field :emergency_corpus, type: Float
 
   embedded_in :user
 

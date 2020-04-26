@@ -1,4 +1,6 @@
 class PersonalAdvisorRequestsController < ApplicationController
+  skip_before_action :authenticate_user!
+
   # POST /personal_advisor_requests
   def create
     @par = PersonalAdvisorRequest.new(personal_advisor_request_params)

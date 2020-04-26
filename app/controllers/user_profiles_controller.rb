@@ -33,7 +33,8 @@ class UserProfilesController < ApplicationController
       :dob,
       :gender,
       { expense_ratio: {} },
-      :monthly_income
+      :monthly_income,
+      :emergency_corpus
     )
   end
 end
