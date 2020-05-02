@@ -8,7 +8,7 @@ set :branch, :master
 set :deploy_to, '/var/www/apps/budget_planner'
 set :pty, true
 set :linked_files, %w{config/app_config.yml config/master.key config/mongoid.yml}
-set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system public/uploads}
+set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system public/uploads}
 set :keep_releases, 5
 set :rvm_type, :user
 set :rvm_ruby_version, 'ruby-2.6.3'
