@@ -1,6 +1,8 @@
 development:
-  browser_base_url: http://localhost:8080/#/
-  browser_confirmation_endpoint: email-verified
+  browser_base_url: http://localhost:8080
+  browser_confirmation_endpoint: /#/email-verified
+  browser_password_reset_endpoint: /#/reset-password
 test:
-  browser_base_url: http://localhost:8080/#/
-  browser_confirmation_endpoint: email-verified
+  browser_base_url: http://localhost:8080
+  browser_confirmation_endpoint: /#/email-verified
+  browser_password_reset_endpoint: /#/reset-password

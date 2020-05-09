@@ -13,6 +13,14 @@ class PasswordsController < Devise::PasswordsController
     end
   end
 
+  def edit
+    super
+
+    redirect_to "#{APP_CONFIG['browser_base_url']}" \
+      "#{APP_CONFIG['browser_password_reset_endpoint']}" \
+      "?reset_password_token=#{params[:reset_password_token]}"
+  end
+
   # PUT /resource/password
   def update
     self.resource = resource_class.reset_password_by_token(resource_params)
