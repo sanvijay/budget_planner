@@ -66,4 +66,16 @@ RSpec.describe CashFlowsController, type: :controller do
       end
     end
   end
+
+  describe "POST create_batch" do
+    it "creates a batch of expected cash_flows" do
+      before_count = user.monthly_budgets.count
+      post :create_batch, params: { user_id: user.to_param, monthly_budget_id: monthly_budget.to_param, cash_flow: { from: "1992-03-28", to: "1993-03-28", value: 1000, category_id: category.id } }, session: valid_session
+      after_count = user.reload.monthly_budgets.count
+
+      expect(after_count - before_count).to eq 13
+      expect(response).to have_http_status(:created)
+      expect(response.content_type).to eq('application/json; charset=utf-8')
+    end
+  end
 end

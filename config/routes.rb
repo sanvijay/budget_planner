@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       resource :user_profile, only: %i[show update]
       resource :custom_rule, only: %i[show update]
 
-      resources :monthly_budgets, except: %i[show update destroy] do
+      resources :monthly_budgets, only: %i[index update] do
         resources :cash_flows, only: %i[index create]
         resources :actual_cash_flow_logs, only: %i[create index destroy]
         collection do

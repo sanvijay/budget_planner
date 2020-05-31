@@ -29,7 +29,7 @@ class CashFlowsController < ApplicationController
       cash_flow.save!
     end
 
-    render plain: 'true', status: :created
+    render json: { success: true }, status: :created
   end
 
   private
@@ -63,7 +63,10 @@ class CashFlowsController < ApplicationController
   def all_months
     start_date = Date.parse(cash_flow_params[:from])
     end_date = Date.parse(cash_flow_params[:to])
-    (start_date..end_date).to_a.group_by(&:month).values.map(&:first)
+
+    (start_date..end_date).to_a.group_by(&:year).values.map do |e|
+      e.group_by(&:month).values.map(&:first)
+    end.flatten
   end
 
   def parse_date

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe MonthlyBudget, type: :model do
   let(:user)           { User.new(email: "sample@example.com", password: "Qweasd12!") }
-  let(:monthly_budget) { user.monthly_budgets.build(month: Date.new(1992, 3, 28)) }
+  let(:monthly_budget) { user.monthly_budgets.build(month: Date.new(1992, 3, 28), prev_month_bal_planned: 300, prev_month_bal_actual: 400) }
 
   describe "validations" do
     it 'is invalid without user_id' do
@@ -40,6 +40,20 @@ RSpec.describe MonthlyBudget, type: :model do
       end
     end
 
+    context "with prev_month_bal_actual" do
+      it "is invalid with non numeric prev_month_bal_actual" do
+        monthly_budget.prev_month_bal_actual = "test"
+        expect(monthly_budget).not_to be_valid
+      end
+    end
+
+    context "with prev_month_bal_planned" do
+      it "is invalid with non numeric prev_month_bal_planned" do
+        monthly_budget.prev_month_bal_planned = "test"
+        expect(monthly_budget).not_to be_valid
+      end
+    end
+
     context "with month" do
       it 'does not allow empty value' do
         monthly_budget.month = '     '
@@ -73,6 +87,16 @@ RSpec.describe MonthlyBudget, type: :model do
 
         mon_budget2 = user.monthly_budgets.create(month: Date.new(1992, 3, 1))
         expect(mon_budget2.month).to eq Date.new(1992, 3, 1)
+      end
+    end
+
+    describe "associations" do
+      before { monthly_budget.save! }
+
+      it "gets deleted when user deleted" do
+        expect(described_class.count).to eq 1
+        user.destroy
+        expect(described_class.count).to eq 0
       end
     end
 

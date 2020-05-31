@@ -2,12 +2,16 @@ class MonthlyBudget
   include Mongoid::Document
 
   field :month, type: Date
+  field :prev_month_bal_actual, type: Float, default: 0
+  field :prev_month_bal_planned, type: Float, default: 0
 
   belongs_to :user
   embeds_many :actual_cash_flow_logs
   embeds_many :cash_flows
 
   validates :month, presence: true, uniqueness: { scope: :user }
+  validates :prev_month_bal_actual, numericality: true
+  validates :prev_month_bal_planned, numericality: true
 
   scope :of_the_year, lambda { |year|
     where(
