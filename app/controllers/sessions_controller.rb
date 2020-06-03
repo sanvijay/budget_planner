@@ -14,6 +14,7 @@ class SessionsController < Devise::SessionsController
 
       unless (user = User.find_by(email: parsed_token[0]["email"]))
         user = User.new(email: parsed_token[0]["email"])
+        user.sign_up_provider = 'google'
         user.skip_confirmation!
         user.save!(validate: false)
       end

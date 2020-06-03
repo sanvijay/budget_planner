@@ -12,6 +12,7 @@ class User
   ## Database authenticatable
   field :email,              type: String, default: ""
   field :encrypted_password, type: String, default: ""
+  field :sign_up_provider,   type: String
 
   ## Recoverable
   field :reset_password_token,   type: String
