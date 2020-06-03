@@ -34,7 +34,8 @@ class UserProfilesController < ApplicationController
       :gender,
       { expense_ratio: {} },
       :monthly_income,
-      :emergency_corpus
+      :emergency_corpus,
+      :month_end_reminder
     )
   end
 end

@@ -17,6 +17,7 @@ class UserProfile
   }
   field :monthly_income, type: Float
   field :emergency_corpus, type: Float
+  field :month_end_reminder, type: Boolean, default: true
 
   embedded_in :user
 
