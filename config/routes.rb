@@ -18,7 +18,6 @@ Rails.application.routes.draw do
     member do
       resources :assets, :goals, :categories, :benefits
       resource :user_profile, only: %i[show update]
-      resource :custom_rule, only: %i[show update]
 
       resources :monthly_budgets, only: %i[index update] do
         resources :cash_flows, only: %i[index create]
