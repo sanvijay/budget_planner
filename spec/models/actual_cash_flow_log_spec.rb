@@ -5,6 +5,7 @@ RSpec.describe ActualCashFlowLog, type: :model do
   let(:category)             { user.categories.create(title: "House Rent", type: "Expense") }
   let(:monthly_budget)       { user.monthly_budgets.build(month: Time.zone.today) }
   let(:actual_cash_flow_log) { monthly_budget.actual_cash_flow_logs.build(valid_attr) }
+  let(:user_profile)         { user.build_user_profile(first_name: "Bike", last_name: "Racer", dob: Date.new(1990, 3, 28), gender: "Male") }
 
   let(:valid_attr) { { description: "Test", category_id: category.id, value: 1000, spent_on: Time.zone.now } }
 
@@ -18,7 +19,7 @@ RSpec.describe ActualCashFlowLog, type: :model do
     end
 
     context "with category_id" do
-      before { monthly_budget.save! }
+      before { user_profile.save!; monthly_budget.save! } # rubocop:disable Style/Semicolon
 
       it 'does not allow empty value' do
         actual_cash_flow_log.category_id = '     '
@@ -75,6 +76,7 @@ RSpec.describe ActualCashFlowLog, type: :model do
       end
 
       it 'sets the precision to 2 decimals' do
+        user_profile.save!
         monthly_budget.save!
         actual_cash_flow_log.value = 1234.5678
         actual_cash_flow_log.save
@@ -89,7 +91,7 @@ RSpec.describe ActualCashFlowLog, type: :model do
   end
 
   describe "callbacks" do
-    before { monthly_budget.save! }
+    before { user_profile.save!; monthly_budget.save! } # rubocop:disable Style/Semicolon
 
     it "creates cash_flow if there is none" do
       expect(monthly_budget.cash_flows.count).to eq 0

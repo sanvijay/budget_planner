@@ -77,7 +77,7 @@ RSpec.describe Benefit, type: :model do
   end
 
   describe "#yearly_total" do
-    before { user.save!; benefit.save! } # rubocop:disable Style/Semicolon
+    let(:user_profile) { user.build_user_profile(first_name: "Bike", last_name: "Racer", dob: Date.new(1990, 3, 28), gender: "Male") }
 
     let(:category1) { user.categories.create!(title: "Test 1", type: "EMI") }
     let(:category2) { user.categories.create!(title: "Test 2", type: "Expense") }
@@ -88,6 +88,8 @@ RSpec.describe Benefit, type: :model do
 
     let(:acfl_attr1) { { description: "Test1", category_id: category1.id, value: 100, spent_on: Date.new(1992, 3, 28) } }
     let(:acfl_attr2) { { description: "Test2", category_id: category2.id, value: 200, spent_on: Date.new(1992, 3, 28) } }
+
+    before { user.save!; user_profile.save!; benefit.save! } # rubocop:disable Style/Semicolon
 
     it "returns 0 when there are no actual_cash_flow_logs associated" do
       expect(benefit.yearly_total(financial_year: 1991)).to eq 0

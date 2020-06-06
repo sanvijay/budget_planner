@@ -5,6 +5,7 @@ RSpec.describe CashFlow, type: :model do
   let(:category)         { user.categories.create(title: "House Rent", type: "Expense") }
   let(:monthly_budget)   { user.monthly_budgets.build(month: Time.zone.today) }
   let(:cash_flow)        { monthly_budget.cash_flows.build(category_id: category.id, planned: 1000) }
+  let(:user_profile)     { user.build_user_profile(first_name: "Bike", last_name: "Racer", dob: Date.new(1992, 3, 28), gender: "Male") }
 
   let(:valid_attr) { { category_id: category.id, planned: 1000 } }
 
@@ -17,16 +18,19 @@ RSpec.describe CashFlow, type: :model do
       it 'does not allow empty planned' do
         cash_flow.category_id = '     '
         expect(cash_flow).not_to be_valid
+        expect(cash_flow.errors[:category_id]).to include("can't be blank")
       end
 
       it 'does not allow character' do
         cash_flow.category_id = 'a'
         expect(cash_flow).not_to be_valid
+        expect(cash_flow.errors[:category_id]).to include("should belong to current user")
       end
 
       it 'does not allow integer' do
         cash_flow.category_id = 1
         expect(cash_flow).not_to be_valid
+        expect(cash_flow.errors[:category_id]).to include("should belong to current user")
       end
 
       it "does not allow duplicate category" do
@@ -45,6 +49,8 @@ RSpec.describe CashFlow, type: :model do
     end
 
     context "with planned" do
+      before { user_profile.save! }
+
       it 'does not allow empty planned' do
         cash_flow.planned = '     '
         expect(cash_flow).not_to be_valid
@@ -64,6 +70,7 @@ RSpec.describe CashFlow, type: :model do
 
     context "with actual" do
       before do
+        user_profile.save!
         monthly_budget.save!
         cash_flow.save!
       end

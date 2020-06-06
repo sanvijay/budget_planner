@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Goal, type: :model do
-  let(:user) { User.new(email: "sample@example.com", password: "Qweasd12!") }
-  let(:goal) { user.goals.build(valid_attr) }
+  let(:user)           { User.create(email: "sample@example.com", password: "Qweasd12!") }
+  let(:user_profile)   { user.build_user_profile(first_name: "Bike", last_name: "Racer", dob: Date.new(1992, 3, 28), gender: "Male") }
+  let(:goal)           { user.goals.build(valid_attr) }
 
   let(:valid_attr) do
     {
@@ -12,6 +13,8 @@ RSpec.describe Goal, type: :model do
       end_date: Time.zone.today + 1
     }
   end
+
+  before { user_profile.save! }
 
   describe "validations" do
     it 'does not create record without parent' do

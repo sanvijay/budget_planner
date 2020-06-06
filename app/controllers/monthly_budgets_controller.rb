@@ -22,7 +22,7 @@ class MonthlyBudgetsController < ApplicationController
   end
 
   # GET all_financial_years
-  def all_financial_years
+  def all_financial_years # rubocop:disable Metrics/AbcSize
     first = @user.monthly_budgets.min(:month)
     return render json: [] if first.nil?
 

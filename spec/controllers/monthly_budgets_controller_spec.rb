@@ -11,11 +11,14 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
   let(:category)           { user.categories.create(title: "House Rent", type: "Expense") }
   let(:monthly_budget)     { user.monthly_budgets.build(valid_attributes) }
   let(:cash_flow)          { monthly_budget.cash_flows.build(category_id: category.id, planned: 1000) }
+  let(:user_profile)       { user.build_user_profile(first_name: "Bike", last_name: "Racer", dob: Date.new(1990, 3, 28), gender: "Male") }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # MonthlyBudgetsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
+
+  before { user_profile.save! }
 
   describe "GET #index" do
     before { monthly_budget.save! }

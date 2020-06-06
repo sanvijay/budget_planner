@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Asset, type: :model do
-  let(:user)       { User.new(email: "sample@example.com", password: "Qweasd12!") }
-  let(:valid_attr) { { title: "House", value: 1000 } }
-  let(:asset)      { user.assets.build(valid_attr) }
+  let(:user)         { User.new(email: "sample@example.com", password: "Qweasd12!") }
+  let(:valid_attr)   { { title: "House", value: 1000 } }
+  let(:asset)        { user.assets.build(valid_attr) }
+  let(:user_profile) { user.build_user_profile(first_name: "Bike", last_name: "Racer", dob: Date.new(1990, 3, 28), gender: "Male") }
 
   describe "validations" do
     it 'does not create record without parent' do
@@ -96,7 +97,7 @@ RSpec.describe Asset, type: :model do
     let(:monthly_budget1) { user.monthly_budgets.build(month: Date.new(1992, 3, 28)) }
     let(:monthly_budget2) { user.monthly_budgets.build(month: Date.new(1993, 3, 28)) }
 
-    before { user.save!; asset.save!; monthly_budget1.save!; monthly_budget2.save! } # rubocop:disable Style/Semicolon
+    before { user.save!; user_profile.save!; asset.save!; monthly_budget1.save!; monthly_budget2.save! } # rubocop:disable Style/Semicolon
 
     it "returns all the monthly_budgets without params" do
       mbs = asset.send(:all_monthly_budgets)
@@ -111,7 +112,7 @@ RSpec.describe Asset, type: :model do
   end
 
   describe "#inflow_actual_cash_flow_logs" do
-    before { user.save!; asset.save! } # rubocop:disable Style/Semicolon
+    before { user.save!; user_profile.save!; asset.save! } # rubocop:disable Style/Semicolon
 
     let(:category1) { user.categories.create!(title: "Test 1", type: "Income") }
     let(:category2) { user.categories.create!(title: "Test 2", type: "Expense") }
@@ -141,7 +142,7 @@ RSpec.describe Asset, type: :model do
   end
 
   describe "#outflow_actual_cash_flow_logs" do
-    before { user.save!; asset.save! } # rubocop:disable Style/Semicolon
+    before { user.save!; user_profile.save!; asset.save! } # rubocop:disable Style/Semicolon
 
     let(:category1) { user.categories.create!(title: "Test 1", type: "Income") }
     let(:category2) { user.categories.create!(title: "Test 2", type: "Expense") }
@@ -171,7 +172,7 @@ RSpec.describe Asset, type: :model do
   end
 
   describe "#total_cost" do
-    before { user.save!; asset.save! } # rubocop:disable Style/Semicolon
+    before { user.save!; user_profile.save!; asset.save! } # rubocop:disable Style/Semicolon
 
     let(:category1) { user.categories.create!(title: "Test 1", type: "Income") }
     let(:category2) { user.categories.create!(title: "Test 2", type: "Expense") }

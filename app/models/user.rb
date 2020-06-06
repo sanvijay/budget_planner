@@ -61,6 +61,10 @@ class User
     "_id"
   end
 
+  def enabled?
+    !user_profile.new_record?
+  end
+
   private
 
   # Converts email to all lower-case.

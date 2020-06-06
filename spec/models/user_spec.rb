@@ -56,4 +56,16 @@ RSpec.describe User, type: :model do
   it "returns _id for primary key which is used by devise" do
     expect(described_class.primary_key).to eq '_id'
   end
+
+  it "is not a enabled user" do
+    user.save!
+    expect(user).not_to be_enabled
+  end
+
+  it "is a enabled user" do
+    user.save!
+    user.create_user_profile(first_name: "Bike", last_name: "Racer", dob: Time.zone.today - 1.day, gender: "Male")
+
+    expect(user).to be_enabled
+  end
 end

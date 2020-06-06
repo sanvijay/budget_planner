@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CustomRule, type: :model do
-  let(:user)         { User.new(email: "sample@example.com") }
+  let(:user)         { User.new(email: "sample@example.com", password: "Qweasd12!") }
   let(:user_profile) { user.build_user_profile(valid_user_profile_attr) }
   let(:custom_rule)  { user.build_custom_rule(valid_attr) }
 
@@ -13,7 +13,7 @@ RSpec.describe CustomRule, type: :model do
     {
       first_name: "Bike",
       last_name: "Racer",
-      dob: Date.today - 1.days,
+      dob: Time.zone.today - 1.day,
       gender: "Male"
     }
   end
@@ -46,6 +46,12 @@ RSpec.describe CustomRule, type: :model do
       custom_rule.emergency_corpus = '     '
       expect(custom_rule).to be_valid
       expect(custom_rule.emergency_corpus).to eq 0.0
+    end
+
+    it 'does not allow empty value for current_emergency_corpus' do
+      custom_rule.current_emergency_corpus = '     '
+      expect(custom_rule).to be_valid
+      expect(custom_rule.current_emergency_corpus).to eq 0.0
     end
 
     it 'does not allow empty value for emergency_corpus_score_weightage_out_of_100' do
@@ -100,7 +106,7 @@ RSpec.describe CustomRule, type: :model do
     end
 
     it 'sets the outflow_split_percentage by dob field' do
-      user_profile.dob = Date.today - 27.years
+      user_profile.dob = Time.zone.today - 27.years
       user_profile.save!
 
       expect(custom_rule).to be_valid

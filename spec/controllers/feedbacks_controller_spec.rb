@@ -27,13 +27,8 @@ RSpec.describe FeedbacksController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Feedback. As you add validations to Feedback, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) do
-    skip("Add a hash of attributes valid for your model")
-  end
-
-  let(:invalid_attributes) do
-    skip("Add a hash of attributes invalid for your model")
-  end
+  let(:valid_attributes)   { { content: "I like this app" } }
+  let(:invalid_attributes) { { content: "               " } }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -51,8 +46,7 @@ RSpec.describe FeedbacksController, type: :controller do
       it "renders a JSON response with the new feedback" do
         post :create, params: { feedback: valid_attributes }, session: valid_session
         expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(feedback_url(Feedback.last))
+        expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
 
@@ -60,7 +54,7 @@ RSpec.describe FeedbacksController, type: :controller do
       it "renders a JSON response with errors for the new feedback" do
         post :create, params: { feedback: invalid_attributes }, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
   end

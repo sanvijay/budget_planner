@@ -25,7 +25,7 @@ class UserProfile
 
   validates :first_name, presence: true, length: { maximum: 50 }
   validates :last_name, presence: true, length: { maximum: 50 }
-  validates :dob, presence: true
+  validates :dob, presence: true # Do not dare to make this as optional.
   validates :gender, presence: true, inclusion: { in: GENDERS.values }
   validates :expense_ratio, presence: true
 
