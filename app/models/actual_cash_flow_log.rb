@@ -6,15 +6,18 @@ class ActualCashFlowLog
 
   field :description, type: String
   field :category_id, type: BSON::ObjectId
+  field :account_id, type: BSON::ObjectId
   field :spent_on, type: DateTime
   field :value, type: Float
 
   validates :description, presence: true, length: { maximum: 50 }
   validates :category_id, presence: true
+  validates :account_id, presence: true
   validates :spent_on, presence: true
   validates :value, presence: true, numericality: true
 
   validate :category_belongs_to_this_owner
+  validate :account_belongs_to_this_owner
 
   before_save :create_cash_flow
   before_save :set_value_precision
@@ -22,6 +25,11 @@ class ActualCashFlowLog
   def category
     @category ||= category_id &&
                   monthly_budget&.user&.categories&.find(category_id)
+  end
+
+  def account
+    @account ||= account_id &&
+                 monthly_budget&.user&.accounts&.find(account_id)
   end
 
   protected
@@ -44,5 +52,12 @@ class ActualCashFlowLog
     return true unless category.nil?
 
     errors.add(:category_id, "should belong to current user")
+  end
+
+  def account_belongs_to_this_owner
+    return if account_id.blank?
+    return true unless account.nil?
+
+    errors.add(:account_id, "should belong to current user")
   end
 end

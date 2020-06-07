@@ -3,6 +3,7 @@ class MonthlyBudget
 
   field :month, type: Date
   field :prev_month_bal_actual, type: Float, default: 0
+  field :prev_month_bal_actuals, type: Hash, default: {}
   field :prev_month_bal_planned, type: Float, default: 0
 
   belongs_to :user
@@ -14,6 +15,7 @@ class MonthlyBudget
   validates :prev_month_bal_planned, numericality: true
 
   validate :user_allowed_to_create
+  validate :valid_prev_month_bal_actuals
 
   scope :of_the_year, lambda { |year|
     where(
@@ -44,6 +46,7 @@ class MonthlyBudget
   }
 
   before_validation :set_month_as_beginning
+  before_validation :convert_prev_month_bal_actuals
 
   def to_param
     "#{format('%<digit>02d', digit: month.month)}#{month.year}"
@@ -55,6 +58,21 @@ class MonthlyBudget
     return if month.blank?
 
     self.month = month.beginning_of_month
+  end
+
+  def convert_prev_month_bal_actuals
+    prev_month_bal_actuals.each do |acc, bal|
+      prev_month_bal_actuals[acc.to_s] = bal.to_f
+    end
+  end
+
+  def valid_prev_month_bal_actuals
+    prev_month_bal_actuals.each do |acc, _bal|
+      unless user.accounts.find(acc.to_s)
+        errors.add(:prev_month_bal_actuals, "invalid accounts not allowed")
+        break
+      end
+    end
   end
 
   # This is for creating goal and recurring budget plan.

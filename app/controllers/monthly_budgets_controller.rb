@@ -85,7 +85,7 @@ class MonthlyBudgetsController < ApplicationController
 
   def prev_month_bal(budget)
     {
-      "prev_month_bal_actual": budget.prev_month_bal_actual,
+      "prev_month_bal_actuals": budget.prev_month_bal_actuals,
       "prev_month_bal_planned": budget.prev_month_bal_planned
     }
   end
@@ -102,7 +102,7 @@ class MonthlyBudgetsController < ApplicationController
   def monthly_budget_params
     params.require(:monthly_budget).permit(
       :prev_month_bal_planned,
-      :prev_month_bal_actual
+      prev_month_bal_actuals: {}
     )
   end
 end

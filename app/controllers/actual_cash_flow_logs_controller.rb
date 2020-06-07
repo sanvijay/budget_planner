@@ -86,7 +86,8 @@ class ActualCashFlowLogsController < ApplicationController
       :description,
       :value,
       :spent_on,
-      :category_id
+      :category_id,
+      :account_id
     )
   end
 end

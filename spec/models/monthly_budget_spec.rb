@@ -51,6 +51,37 @@ RSpec.describe MonthlyBudget, type: :model do
       end
     end
 
+    context "with prev_month_bal_actuals" do
+      let(:account) { user.accounts.create(name: "Food card") }
+
+      it "is valid with allowed account" do
+        monthly_budget.prev_month_bal_actuals = { account.to_param => 0 }
+        expect(monthly_budget).to be_valid
+      end
+
+      it "is invalid with non-allowed account" do
+        monthly_budget.prev_month_bal_actuals = { "test" => 0 }
+        expect(monthly_budget).not_to be_valid
+        expect(monthly_budget.errors[:prev_month_bal_actuals]).to include("invalid accounts not allowed")
+      end
+
+      it "converts the non-numeric character to numeric" do
+        monthly_budget.prev_month_bal_actuals = { account.to_param => "100.99" }
+        expect(monthly_budget.save).to be_truthy
+
+        monthly_budget.reload
+        expect(monthly_budget.prev_month_bal_actuals).to eq(account.to_param => 100.99)
+      end
+
+      it "converts the non-numeric character to numeric - non number" do
+        monthly_budget.prev_month_bal_actuals = { account.to_param => "test" }
+        expect(monthly_budget.save).to be_truthy
+
+        monthly_budget.reload
+        expect(monthly_budget.prev_month_bal_actuals).to eq(account.to_param => 0)
+      end
+    end
+
     context "with prev_month_bal_planned" do
       it "is invalid with non numeric prev_month_bal_planned" do
         monthly_budget.prev_month_bal_planned = "test"

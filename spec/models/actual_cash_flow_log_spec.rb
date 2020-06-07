@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe ActualCashFlowLog, type: :model do
   let(:user)                 { User.create(email: "sample@example.com", password: "Qweasd12!") }
   let(:category)             { user.categories.create(title: "House Rent", type: "Expense") }
+  let(:account)              { user.accounts.create(name: "Food Card") }
   let(:monthly_budget)       { user.monthly_budgets.build(month: Time.zone.today) }
   let(:actual_cash_flow_log) { monthly_budget.actual_cash_flow_logs.build(valid_attr) }
   let(:user_profile)         { user.build_user_profile(first_name: "Bike", last_name: "Racer", dob: Date.new(1990, 3, 28), gender: "Male") }
 
-  let(:valid_attr) { { description: "Test", category_id: category.id, value: 1000, spent_on: Time.zone.now } }
+  let(:valid_attr) { { description: "Test", category_id: category.id, account_id: account.id, value: 1000, spent_on: Time.zone.now } }
 
   describe "validations" do
     pending 'does not create record without parent' do
@@ -24,6 +25,7 @@ RSpec.describe ActualCashFlowLog, type: :model do
       it 'does not allow empty value' do
         actual_cash_flow_log.category_id = '     '
         expect(actual_cash_flow_log).not_to be_valid
+        expect(actual_cash_flow_log.errors[:category_id]).to include("can't be blank")
       end
 
       it 'does not allow character' do
@@ -48,6 +50,22 @@ RSpec.describe ActualCashFlowLog, type: :model do
 
         actual_cash_flow_log.category_id = new_category.id
         expect(actual_cash_flow_log).not_to be_valid
+      end
+    end
+
+    context "with account_id" do
+      it 'does not allow empty value' do
+        actual_cash_flow_log.account_id = '     '
+        expect(actual_cash_flow_log).not_to be_valid
+      end
+
+      it 'does not allow non-existing account of this user' do
+        new_account = User.create(email: "sample2@example.com", password: "Qweasd12!").accounts.create(name: "Food Card")
+        expect(new_account.id).not_to eq account.id
+
+        actual_cash_flow_log.account_id = new_account.id
+        expect(actual_cash_flow_log).not_to be_valid
+        expect(actual_cash_flow_log.errors[:account_id]).to include("should belong to current user")
       end
     end
 

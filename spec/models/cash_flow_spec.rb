@@ -10,6 +10,10 @@ RSpec.describe CashFlow, type: :model do
   let(:valid_attr) { { category_id: category.id, planned: 1000 } }
 
   describe "validations" do
+    pending 'does not create record without parent' do
+      expect { described_class.create(valid_attr) }.to raise_exception(Mongoid::Errors::NoParent)
+    end
+
     it 'is a valid cash_flow' do
       expect(cash_flow).to be_valid
     end
@@ -69,6 +73,8 @@ RSpec.describe CashFlow, type: :model do
     end
 
     context "with actual" do
+      let(:account) { user.accounts.create(name: "Food Card") }
+
       before do
         user_profile.save!
         monthly_budget.save!
@@ -80,8 +86,8 @@ RSpec.describe CashFlow, type: :model do
       end
 
       it 'returns the sum when there are logs' do
-        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_on: Time.zone.now, description: "Test")
-        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, spent_on: Time.zone.now, description: "Test")
+        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, account_id: account.id, spent_on: Time.zone.now, description: "Test")
+        monthly_budget.actual_cash_flow_logs.create!(category_id: category.id, value: 1000, account_id: account.id, spent_on: Time.zone.now, description: "Test")
 
         expect(cash_flow.actual).to eq 2000.0
       end

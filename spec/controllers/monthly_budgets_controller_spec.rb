@@ -4,7 +4,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # monthly_budget. As you add validations to monthly_budget, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes)   { { month: Date.new(1992, 3, 28).to_s, prev_month_bal_planned: 300, prev_month_bal_actual: 400 } }
+  let(:valid_attributes)   { { month: Date.new(1992, 3, 28).to_s, prev_month_bal_planned: 300, prev_month_bal_actuals: { account.to_param => "50.99" } } }
   let(:invalid_attributes) { { month: "" } }
 
   let(:user)               { User.create(email: "sample@example.com", password: "Qweasd12!") }
@@ -12,6 +12,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
   let(:monthly_budget)     { user.monthly_budgets.build(valid_attributes) }
   let(:cash_flow)          { monthly_budget.cash_flows.build(category_id: category.id, planned: 1000) }
   let(:user_profile)       { user.build_user_profile(first_name: "Bike", last_name: "Racer", dob: Date.new(1990, 3, 28), gender: "Male") }
+  let(:account)            { user.accounts.create(name: "Food card") }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -42,7 +43,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
       get :index, params: { user_id: user.to_param, financial_year: 1991 }, session: valid_session
 
       response_body = JSON.parse(response.body)
-      expect(response_body).to eq(1992.to_s => { 3.to_s => { "Expense" => { category.to_param => { "actual" => 0, "id" => cash_flow.to_param, "logs" => [], "planned" => 1000.0 } }, "prev_month_bal_actual" => 400.0, "prev_month_bal_planned" => 300.0 } })
+      expect(response_body).to eq(1992.to_s => { 3.to_s => { "Expense" => { category.to_param => { "actual" => 0, "id" => cash_flow.to_param, "logs" => [], "planned" => 1000.0 } }, "prev_month_bal_actuals" => { account.to_param => 50.99 }, "prev_month_bal_planned" => 300.0 } })
     end
   end
 
@@ -50,7 +51,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
     before { monthly_budget.save! }
 
     let(:new_attributes) do
-      { prev_month_bal_planned: 100, prev_month_bal_actual: 200 }
+      { prev_month_bal_planned: 100, prev_month_bal_actuals: { account.to_param => 100.99 } }
     end
 
     context "with valid params" do
@@ -58,7 +59,7 @@ RSpec.describe MonthlyBudgetsController, type: :controller do
         put :update, params: { user_id: user.to_param, id: monthly_budget.to_param, monthly_budget: new_attributes }, session: valid_session
         monthly_budget.reload
         expect(monthly_budget.prev_month_bal_planned).to eq new_attributes[:prev_month_bal_planned]
-        expect(monthly_budget.prev_month_bal_actual).to eq new_attributes[:prev_month_bal_actual]
+        expect(monthly_budget.prev_month_bal_actuals).to eq new_attributes[:prev_month_bal_actuals]
       end
 
       it "renders a JSON response with the monthly_budget" do

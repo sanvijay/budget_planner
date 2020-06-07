@@ -185,7 +185,8 @@ RSpec.describe Goal, type: :model do
 
   describe "#actual_cash_flow" do
     let(:monthly_budget)       { user.monthly_budgets.build(month: Time.zone.today) }
-    let(:log_attr)             { { description: "Test", category_id: goal.category.id, value: 100, spent_on: Time.zone.now } }
+    let(:account)              { user.accounts.create(name: "Food Card") }
+    let(:log_attr)             { { description: "Test", category_id: goal.category.id, account_id: account.id, value: 100, spent_on: Time.zone.now } }
     let(:actual_cash_flow_log) { monthly_budget.actual_cash_flow_logs.build(log_attr) }
 
     it "returns 0 where there are no expenses tracked for this goal" do

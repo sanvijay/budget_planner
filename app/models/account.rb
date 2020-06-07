@@ -1,10 +1,11 @@
-class Quiz
+class Account
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Paranoia
 
   field :name, type: String
-  field :planned_before, type: Boolean
-  field :score, type: Integer
+
+  embedded_in :user
 
   validates :name, presence: true, length: { maximum: 50 }
 end

@@ -114,6 +114,7 @@ RSpec.describe Asset, type: :model do
   describe "#inflow_actual_cash_flow_logs" do
     before { user.save!; user_profile.save!; asset.save! } # rubocop:disable Style/Semicolon
 
+    let(:account)   { user.accounts.create(name: "Food Card") }
     let(:category1) { user.categories.create!(title: "Test 1", type: "Income") }
     let(:category2) { user.categories.create!(title: "Test 2", type: "Expense") }
 
@@ -121,8 +122,8 @@ RSpec.describe Asset, type: :model do
     let(:actual_cash_flow_log1) { monthly_budget.actual_cash_flow_logs.create!(acfl_attr1) }
     let(:actual_cash_flow_log2) { monthly_budget.actual_cash_flow_logs.create!(acfl_attr2) }
 
-    let(:acfl_attr1) { { description: "Test1", category_id: category1.id, value: 100, spent_on: Date.new(1992, 3, 28) } }
-    let(:acfl_attr2) { { description: "Test2", category_id: category2.id, value: 200, spent_on: Date.new(1992, 3, 28) } }
+    let(:acfl_attr1) { { description: "Test1", category_id: category1.id, account_id: account.id, value: 100, spent_on: Date.new(1992, 3, 28) } }
+    let(:acfl_attr2) { { description: "Test2", category_id: category2.id, account_id: account.id, value: 200, spent_on: Date.new(1992, 3, 28) } }
 
     it "returns 0 when there are no actual_cash_flow_logs associated" do
       expect(asset.inflow_actual_cash_flow_logs(financial_year: 1991)).to eq 0
@@ -144,6 +145,7 @@ RSpec.describe Asset, type: :model do
   describe "#outflow_actual_cash_flow_logs" do
     before { user.save!; user_profile.save!; asset.save! } # rubocop:disable Style/Semicolon
 
+    let(:account)   { user.accounts.create(name: "Food Card") }
     let(:category1) { user.categories.create!(title: "Test 1", type: "Income") }
     let(:category2) { user.categories.create!(title: "Test 2", type: "Expense") }
 
@@ -151,8 +153,8 @@ RSpec.describe Asset, type: :model do
     let(:actual_cash_flow_log1) { monthly_budget.actual_cash_flow_logs.create!(acfl_attr1) }
     let(:actual_cash_flow_log2) { monthly_budget.actual_cash_flow_logs.create!(acfl_attr2) }
 
-    let(:acfl_attr1) { { description: "Test1", category_id: category1.id, value: 100, spent_on: Date.new(1992, 3, 28) } }
-    let(:acfl_attr2) { { description: "Test2", category_id: category2.id, value: 200, spent_on: Date.new(1992, 3, 28) } }
+    let(:acfl_attr1) { { description: "Test1", category_id: category1.id, account_id: account.id, value: 100, spent_on: Date.new(1992, 3, 28) } }
+    let(:acfl_attr2) { { description: "Test2", category_id: category2.id, account_id: account.id, value: 200, spent_on: Date.new(1992, 3, 28) } }
 
     it "returns 0 when there are no actual_cash_flow_logs associated" do
       expect(asset.outflow_actual_cash_flow_logs(financial_year: 1991)).to eq 0
@@ -174,6 +176,8 @@ RSpec.describe Asset, type: :model do
   describe "#total_cost" do
     before { user.save!; user_profile.save!; asset.save! } # rubocop:disable Style/Semicolon
 
+    let(:account) { user.accounts.create(name: "Food Card") }
+
     let(:category1) { user.categories.create!(title: "Test 1", type: "Income") }
     let(:category2) { user.categories.create!(title: "Test 2", type: "Expense") }
 
@@ -181,8 +185,8 @@ RSpec.describe Asset, type: :model do
     let(:actual_cash_flow_log1) { monthly_budget.actual_cash_flow_logs.create!(acfl_attr1) }
     let(:actual_cash_flow_log2) { monthly_budget.actual_cash_flow_logs.create!(acfl_attr2) }
 
-    let(:acfl_attr1) { { description: "Test1", category_id: category1.id, value: 100, spent_on: Date.new(1992, 3, 28) } }
-    let(:acfl_attr2) { { description: "Test2", category_id: category2.id, value: 200, spent_on: Date.new(1992, 3, 28) } }
+    let(:acfl_attr1) { { description: "Test1", category_id: category1.id, account_id: account.id, value: 100, spent_on: Date.new(1992, 3, 28) } }
+    let(:acfl_attr2) { { description: "Test2", category_id: category2.id, account_id: account.id, value: 200, spent_on: Date.new(1992, 3, 28) } }
 
     it "returns 0 when there are no actual_cash_flow_logs associated" do
       expect(asset.outflow_actual_cash_flow_logs(financial_year: 1991)).to eq 0
