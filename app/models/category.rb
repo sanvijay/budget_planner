@@ -29,7 +29,7 @@ class Category
 
   validate :goal_belongs_to_this_owner, :asset_belongs_to_this_owner,
            :benefit_belongs_to_this_owner, :loan_belongs_to_this_owner,
-           :benefit_only_for_expenses
+           :benefit_only_for_expenses, :loan_only_for_expenses
 
   scope :by_income, -> { where(type: SUPER_CATEGORY[:income]) }
   scope :by_expense, -> { where(type: SUPER_CATEGORY[:expense]) }
@@ -92,5 +92,12 @@ class Category
     return true if INFLOW_SUPER_CATEGORY.exclude?(type)
 
     errors.add(:benefit_id, "can only be added to expenses")
+  end
+
+  def loan_only_for_expenses
+    return if loan_id.blank?
+    return true if INFLOW_SUPER_CATEGORY.exclude?(type)
+
+    errors.add(:loan_id, "can only be added to expenses")
   end
 end

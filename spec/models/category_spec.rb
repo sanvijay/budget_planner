@@ -94,6 +94,7 @@ RSpec.describe Category, type: :model do
 
     context "with loan" do
       it "doesn't allow loan of another user" do
+        category.type = "Expense"
         user2 = User.create(email: "example@sample.com")
         loan = user2.loans.build(
           description: "Bike",
@@ -109,6 +110,7 @@ RSpec.describe Category, type: :model do
       end
 
       it "is valid with valid current user loan" do
+        category.type = "Expense"
         loan = user.loans.build(
           description: "Bike",
           value: 1000,
@@ -120,6 +122,21 @@ RSpec.describe Category, type: :model do
         category.loan_id = loan.id
         category.save
         expect(category).to be_valid
+      end
+
+      it "is not valid with Income category type" do
+        category.type = "Income"
+        loan = user.loans.build(
+          description: "Bike",
+          value: 1000,
+          emi: 1000,
+          start_date: Time.zone.today,
+          end_date: Time.zone.today + 1
+        )
+
+        category.loan_id = loan.id
+        category.save
+        expect(category).not_to be_valid
       end
 
       it "returns nil for empty loan_id" do
