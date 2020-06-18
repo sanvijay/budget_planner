@@ -23,5 +23,13 @@ RSpec.describe Account, type: :model do
       account.name = 'a' * 51
       expect(account).not_to be_valid
     end
+
+    it "does not allow duplicate name" do
+      dup_account = account.dup
+      dup_account.name = account.name.upcase
+      dup_account.user = user
+      account.save
+      expect(dup_account).not_to be_valid
+    end
   end
 end

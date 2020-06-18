@@ -44,6 +44,7 @@ class User
   embeds_one :user_profile, autobuild: true
   embeds_one :custom_rule, autobuild: true
   embeds_many :goals
+  embeds_many :loans
   embeds_many :assets
   embeds_many :categories
   embeds_many :benefits

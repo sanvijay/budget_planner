@@ -7,5 +7,6 @@ class Account
 
   embedded_in :user
 
-  validates :name, presence: true, length: { maximum: 50 }
+  validates :name, presence: true, length: { maximum: 50 },
+                   uniqueness: { case_sensitive: false }
 end

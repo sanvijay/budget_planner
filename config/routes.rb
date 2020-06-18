@@ -16,7 +16,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [], param: :user_id do
     member do
-      resources :assets, :goals, :categories, :benefits, :accounts
+      resources :assets, :goals, :categories, :benefits, :accounts, :loans
       resource :user_profile, only: %i[show update]
 
       resources :monthly_budgets, only: %i[index update] do

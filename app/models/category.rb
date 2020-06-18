@@ -19,6 +19,7 @@ class Category
   field :goal_id, type: BSON::ObjectId
   field :benefit_id, type: BSON::ObjectId
   field :asset_id, type: BSON::ObjectId
+  field :loan_id, type: BSON::ObjectId
 
   embedded_in :user
 
@@ -27,7 +28,8 @@ class Category
                     uniqueness: { scope: :type, case_sensitive: false }
 
   validate :goal_belongs_to_this_owner, :asset_belongs_to_this_owner,
-           :benefit_belongs_to_this_owner, :benefit_only_for_expenses
+           :benefit_belongs_to_this_owner, :loan_belongs_to_this_owner,
+           :benefit_only_for_expenses
 
   scope :by_income, -> { where(type: SUPER_CATEGORY[:income]) }
   scope :by_expense, -> { where(type: SUPER_CATEGORY[:expense]) }
@@ -41,6 +43,10 @@ class Category
 
   def goal
     @goal ||= goal_id && user.goals.find(goal_id)
+  end
+
+  def loan
+    @loan ||= loan_id && user.loans.find(loan_id)
   end
 
   def benefit
@@ -72,6 +78,13 @@ class Category
     return true unless benefit.nil?
 
     errors.add(:benefit_id, "should belong to current user")
+  end
+
+  def loan_belongs_to_this_owner
+    return if loan_id.blank?
+    return true unless loan.nil?
+
+    errors.add(:loan_id, "should belong to current user")
   end
 
   def benefit_only_for_expenses

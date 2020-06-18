@@ -92,6 +92,42 @@ RSpec.describe Category, type: :model do
       end
     end
 
+    context "with loan" do
+      it "doesn't allow loan of another user" do
+        user2 = User.create(email: "example@sample.com")
+        loan = user2.loans.build(
+          description: "Bike",
+          value: 1000,
+          emi: 1000,
+          start_date: Time.zone.today,
+          end_date: Time.zone.today + 1
+        )
+
+        category.loan_id = loan.id
+        category.save
+        expect(category).not_to be_valid
+      end
+
+      it "is valid with valid current user loan" do
+        loan = user.loans.build(
+          description: "Bike",
+          value: 1000,
+          emi: 1000,
+          start_date: Time.zone.today,
+          end_date: Time.zone.today + 1
+        )
+
+        category.loan_id = loan.id
+        category.save
+        expect(category).to be_valid
+      end
+
+      it "returns nil for empty loan_id" do
+        category.save
+        expect(category.loan).to be_nil
+      end
+    end
+
     context "with asset" do
       it "doesn't allow asset of another user" do
         user2 = User.create(email: "example@sample.com")

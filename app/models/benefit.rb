@@ -1,6 +1,7 @@
 class Benefit
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Paranoia
 
   field :title, type: String
   field :value, type: Float
