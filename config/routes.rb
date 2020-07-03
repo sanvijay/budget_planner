@@ -16,6 +16,12 @@ Rails.application.routes.draw do
 
   resources :users, only: [], param: :user_id do
     member do
+      resources :phone_numbers, only: [:create, :index] do
+        collection do
+          post :verify, to: "phone_numbers#verify"
+        end
+      end
+
       resources :assets, :goals, :categories, :benefits, :accounts, :loans
       resource :user_profile, only: %i[show update]
 
