@@ -21,6 +21,8 @@ class Loan
   validate :end_date_cannot_be_in_past_of_start_date
   validate :description_with_same_category_title
 
+  validates_with UserAccessValidator
+
   scope :during_financial_year, lambda { |year|
     where(
       :end_date.gte => Date.new(year, 4, 1),
@@ -29,7 +31,7 @@ class Loan
   }
 
   before_save :set_value_precision
-  after_create :create_category, :create_planned_cash_flows
+  after_create :create_category!, :create_planned_cash_flows!
 
   def category
     @category ||= user.categories.find_by(loan_id: id)
@@ -69,7 +71,7 @@ class Loan
     )
   end
 
-  def create_category
+  def create_category!
     @category = user.categories.create!(
       title: description,
       type: "EMI",
@@ -77,7 +79,7 @@ class Loan
     )
   end
 
-  def create_planned_cash_flows
+  def create_planned_cash_flows!
     num_of_months = num_of_months_needs_to_finish_loan
     num_of_months.times do |i|
       monthly_budget = user.monthly_budgets.find_or_create_by(

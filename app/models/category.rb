@@ -31,6 +31,8 @@ class Category
            :benefit_belongs_to_this_owner, :loan_belongs_to_this_owner,
            :benefit_only_for_expenses, :loan_only_for_expenses
 
+  validates_with UserAccessValidator
+
   scope :by_income, -> { where(type: SUPER_CATEGORY[:income]) }
   scope :by_expense, -> { where(type: SUPER_CATEGORY[:expense]) }
   scope :by_emi, -> { where(type: SUPER_CATEGORY[:emi]) }

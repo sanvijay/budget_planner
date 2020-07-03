@@ -46,7 +46,8 @@ class User
   # field :locked_at,       type: Time
 
   embeds_one :user_profile, autobuild: true
-  embeds_one :custom_rule, autobuild: true
+  embeds_one :user_access,  autobuild: true
+  embeds_one :custom_rule,  autobuild: true
   embeds_many :goals
   embeds_many :loans
   embeds_many :assets
@@ -70,6 +71,10 @@ class User
 
   def enabled?
     !user_profile.new_record?
+  end
+
+  def user_model
+    UserAccess::SUPPORTED_MODELS[user_access.model]
   end
 
   def verify_phone(entered_pin)

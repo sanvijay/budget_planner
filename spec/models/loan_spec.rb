@@ -119,6 +119,16 @@ RSpec.describe Loan, type: :model do
         expect(loan.errors.messages[:title][0]).to eq "can't have description with already existing category"
       end
     end
+
+    context "with number of records" do
+      it "does not allow more that 3 records for free account" do
+        user.save!
+        3.times { |i| user.loans.create!(description: "Loan #{i}", value: 100, emi: 10, start_date: Time.zone.today, end_date: Time.zone.today + 1) }
+
+        expect(loan).not_to be_valid
+        expect(loan.errors.messages[:base][0]).to eq "loans count exceeded"
+      end
+    end
   end
 
   describe "call backs" do

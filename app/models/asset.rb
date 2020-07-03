@@ -11,6 +11,8 @@ class Asset
   validates :title, presence: true, length: { maximum: 255 }
   validates :value, presence: true, numericality: true
 
+  validates_with UserAccessValidator
+
   before_save :set_value_precision
 
   def categories

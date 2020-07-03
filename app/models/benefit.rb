@@ -13,6 +13,8 @@ class Benefit
   validates :value, presence: true, numericality: { other_than: 0 }
   validates :score_weightage_out_of_100, presence: true
 
+  validates_with UserAccessValidator
+
   before_save :set_value_precision
 
   def categories

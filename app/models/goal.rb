@@ -17,10 +17,11 @@ class Goal
   validates :target, presence: true, numericality: true
   validates :start_date, presence: true
   validates :end_date, presence: true
-  validates :score_weightage_out_of_100, presence: true
 
   validate :end_date_cannot_be_in_past_of_start_date
   validate :description_with_same_category_title
+
+  validates_with UserAccessValidator
 
   scope :during_financial_year, lambda { |year|
     where(
@@ -30,7 +31,7 @@ class Goal
   }
 
   before_save :set_target_precision
-  after_create :create_category, :create_planned_cash_flows
+  after_create :create_category!, :create_planned_cash_flows!
 
   def category
     @category ||= user.categories.find_by(goal_id: id)
@@ -70,7 +71,7 @@ class Goal
     )
   end
 
-  def create_category
+  def create_category!
     @category = user.categories.create!(
       title: description,
       type: "EMI",
@@ -78,7 +79,7 @@ class Goal
     )
   end
 
-  def create_planned_cash_flows
+  def create_planned_cash_flows!
     num_of_months = num_of_months_needs_to_achieve_goal
     split = target / num_of_months
     num_of_months.times do |i|

@@ -19,7 +19,7 @@ class ActualCashFlowLog
   validate :category_belongs_to_this_owner
   validate :account_belongs_to_this_owner
 
-  before_save :create_cash_flow
+  before_save :create_cash_flow!
   before_save :set_value_precision
 
   def category
@@ -38,7 +38,7 @@ class ActualCashFlowLog
     self.value = value.round(2)
   end
 
-  def create_cash_flow
+  def create_cash_flow!
     return if monthly_budget.cash_flows.find_by(category_id: category_id)
 
     monthly_budget.cash_flows.create!(

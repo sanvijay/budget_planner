@@ -29,11 +29,6 @@ RSpec.describe Goal, type: :model do
       it 'sets score_weightage_out_of_100 by default' do
         expect(goal.score_weightage_out_of_100).to eq 100
       end
-
-      it 'does not allow empty value' do
-        goal.score_weightage_out_of_100 = '     '
-        expect(goal).not_to be_valid
-      end
     end
 
     context "with description" do
@@ -127,6 +122,16 @@ RSpec.describe Goal, type: :model do
 
         expect(goal).not_to be_valid
         expect(goal.errors.messages[:title][0]).to eq "can't have description with already existing category"
+      end
+    end
+
+    context "with number of records" do
+      it "does not allow more that 3 records for free account" do
+        user.save!
+        3.times { |i| user.goals.create!(description: "Goal #{i}", target: 1000, start_date: Time.zone.today, end_date: Time.zone.today + 1) }
+
+        expect(goal).not_to be_valid
+        expect(goal.errors.messages[:base][0]).to eq "goals count exceeded"
       end
     end
   end

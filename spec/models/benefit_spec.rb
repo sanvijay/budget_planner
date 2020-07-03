@@ -39,6 +39,16 @@ RSpec.describe Benefit, type: :model do
       benefit.save
       expect(benefit.reload.value).to eq 1234.57
     end
+
+    context "with number of records" do
+      it "does not allow more that 3 records for free account" do
+        user.save!
+        3.times { |i| user.benefits.create!(title: "Benefit #{i}", value: 1000) }
+
+        expect(benefit).not_to be_valid
+        expect(benefit.errors.messages[:base][0]).to eq "benefits count exceeded"
+      end
+    end
   end
 
   describe "#categories" do

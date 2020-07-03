@@ -218,6 +218,16 @@ RSpec.describe Category, type: :model do
       end
     end
 
+    context "with number of records" do
+      it "does not allow more that 15 records for free account" do
+        user.save!
+        15.times { |i| user.categories.create!(title: "Category #{i}", type: "Income") }
+
+        expect(category).not_to be_valid
+        expect(category.errors.messages[:base][0]).to eq "categories count exceeded"
+      end
+    end
+
     context "with category scope" do
       before do
         user.save
