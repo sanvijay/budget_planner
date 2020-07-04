@@ -68,4 +68,12 @@ RSpec.describe User, type: :model do
 
     expect(user).to be_enabled
   end
+
+  it "saves the user_access but not user_profile" do
+    user.save!
+
+    expect(user.user_profile).to be_new_record
+    expect(user.user_access).not_to be_new_record
+    expect(user.user_access.referring_token).not_to be_nil
+  end
 end

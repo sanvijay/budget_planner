@@ -116,6 +116,7 @@ RSpec.describe MonthlyBudget, type: :model do
 
       it "is not a valid month budget if it is 100 years old" do
         user.user_profile.dob = Time.zone.today
+        user.user_access.model = :prime
 
         monthly_budget = user.monthly_budgets.new(month: Time.zone.today + (100 * 366).days)
         expect(monthly_budget).not_to be_valid
@@ -128,6 +129,16 @@ RSpec.describe MonthlyBudget, type: :model do
         monthly_budget = user.monthly_budgets.new(month: Time.zone.today)
         expect(monthly_budget).not_to be_valid
         expect(monthly_budget.errors[:month]).to include("too young to create budget")
+      end
+
+      it "is not a valid month budget if the plan doesn't support" do
+        # TODO: Get from proper place
+        date = Time.zone.today
+        year = date.month < 4 ? date.year - 1 : date.year
+
+        monthly_budget = user.monthly_budgets.new(month: Date.new(year + 2, 4, 1))
+        expect(monthly_budget).not_to be_valid
+        expect(monthly_budget.errors[:month]).to include("your plan doesn't support planning further")
       end
     end
 

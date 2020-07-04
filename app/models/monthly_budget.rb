@@ -16,6 +16,7 @@ class MonthlyBudget
 
   validate :user_allowed_to_create
   validate :valid_prev_month_bal_actuals
+  validate :user_access_permission
 
   scope :of_the_year, lambda { |year|
     where(
@@ -95,5 +96,19 @@ class MonthlyBudget
     return if (month - user.user_profile.dob).days.to_i.positive?
 
     errors.add(:month, "too young to create budget")
+  end
+
+  def user_access_permission
+    return unless (validity = user.user_model[:plan_upto_in_years])
+
+    return if (month.year - current_financial_year) < validity
+
+    errors.add(:month, "your plan doesn't support planning further")
+  end
+
+  # TODO: Move to the proper place
+  def current_financial_year
+    date = Time.zone.today
+    date.month < 4 ? date.year - 1 : date.year
   end
 end

@@ -47,7 +47,6 @@ class User
 
   embeds_one :user_profile, autobuild: true
   embeds_one :user_access,  autobuild: true
-  embeds_one :custom_rule,  autobuild: true
   embeds_many :goals
   embeds_many :loans
   embeds_many :assets
@@ -64,6 +63,7 @@ class User
                     uniqueness: { case_sensitive: false }
 
   before_save :downcase_email
+  after_create :save_user_access!
 
   def self.primary_key
     "_id"
@@ -113,5 +113,9 @@ class User
       ENV['TWILIO_ACCOUNT_SID'],
       ENV['TWILIO_AUTH_TOKEN']
     )
+  end
+
+  def save_user_access!
+    create_user_access
   end
 end
