@@ -116,7 +116,7 @@ RSpec.describe MonthlyBudget, type: :model do
 
       it "is not a valid month budget if it is 100 years old" do
         user.user_profile.dob = Time.zone.today
-        user.user_access.model = :prime
+        user.user_access.plan = :prime
 
         monthly_budget = user.monthly_budgets.new(month: Time.zone.today + (100 * 366).days)
         expect(monthly_budget).not_to be_valid

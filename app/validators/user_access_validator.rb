@@ -4,7 +4,7 @@ class UserAccessValidator < ActiveModel::Validator
 
     class_string = record.class.to_s.underscore.pluralize.to_sym
     count = user.public_send(class_string).count
-    return if user.user_model[class_string] > count
+    return if user.user_plan[class_string] > count
 
     record.errors[:base] << "#{class_string} count exceeded"
   end

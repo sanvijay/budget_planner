@@ -99,7 +99,7 @@ class MonthlyBudget
   end
 
   def user_access_permission
-    return unless (validity = user.user_model[:plan_upto_in_years])
+    return unless (validity = user.user_plan[:plan_upto_in_years])
 
     return if (month.year - current_financial_year) < validity
 

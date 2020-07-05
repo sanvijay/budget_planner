@@ -25,6 +25,10 @@ Rails.application.routes.draw do
       resources :assets, :goals, :categories, :benefits, :accounts, :loans
       resource :user_profile, only: %i[show update]
 
+      resource :user_access, only: %i[show]
+      post :claim_plus_access, to: "user_accesses#claim_plus_access"
+      post :refer, to: "user_accesses#refer"
+
       resources :monthly_budgets, only: %i[index update] do
         resources :cash_flows, only: %i[index create]
         resources :actual_cash_flow_logs, only: %i[create index destroy]

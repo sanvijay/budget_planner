@@ -38,6 +38,8 @@ class User
   field :phone_pin,            type: String
   field :phone_verified,       type: Boolean, default: false
 
+  field :referring_token, type: String, default: nil
+
   ## Lockable
   # Only if lock strategy is :failed_attempts
   # field :failed_attempts, type: Integer, default: 0
@@ -62,8 +64,12 @@ class User
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
 
+  validates :phone_number, uniqueness: { allow_blank: true }
+  validates :referring_token, presence: true,
+                              uniqueness: { case_sensitive: true }
+
+  before_validation :generate_referring_token
   before_save :downcase_email
-  after_create :save_user_access!
 
   def self.primary_key
     "_id"
@@ -73,8 +79,8 @@ class User
     !user_profile.new_record?
   end
 
-  def user_model
-    UserAccess::SUPPORTED_MODELS[user_access.model]
+  def user_plan
+    UserAccess::SUPPORTED_PLANS[user_access.plan]
   end
 
   def verify_phone(entered_pin)
@@ -103,6 +109,10 @@ class User
 
   private
 
+  def generate_referring_token
+    self.referring_token = SecureRandom.hex(4) if referring_token.nil?
+  end
+
   # Converts email to all lower-case.
   def downcase_email
     self.email = email.downcase
@@ -113,9 +123,5 @@ class User
       ENV['TWILIO_ACCOUNT_SID'],
       ENV['TWILIO_AUTH_TOKEN']
     )
-  end
-
-  def save_user_access!
-    create_user_access
   end
 end

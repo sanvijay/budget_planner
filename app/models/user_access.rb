@@ -2,8 +2,8 @@ class UserAccess
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  MIN__REFERRAL_COUNT_FOR_SUCCESSFUL_PLUS_ACCOUNT = 3
-  SUPPORTED_MODELS = {
+  MIN_REFERRAL_COUNT_FOR_PLUS_PLAN = 3
+  SUPPORTED_PLANS = {
     free: {
       goals: 3,
       categories: 15,
@@ -29,49 +29,63 @@ class UserAccess
     }
   }.freeze
 
-  field :model,            type: Symbol, default: :free
-  field :model_updated_at, type: Date
+  field :plan,            type: Symbol, default: :free
+  field :plan_updated_at, type: Date
 
   field :referred_by,      type: BSON::ObjectId
   field :referred_users,   type: Array, default: []
-  field :referring_token,  type: String, default: nil
 
   embedded_in :user
 
-  validate :allowed_model
+  validates :plan, inclusion: { in: SUPPORTED_PLANS.keys }
+
   validate :allowed_referred_by_user
   validate :allowed_referred_users
 
-  before_save :generate_referring_token
+  before_save :remove_duplicate_referred_users
 
   def claim_plus_access!
-    return unless claim_plus_access?
+    return false unless claim_plus_access?
 
-    self.model = :plus
-    self.model_updated_at = Time.zone.today
+    self.plan = :plus
+    self.plan_updated_at = Time.zone.today
     save!
   end
 
   def referred_by_user
-    User.find(referred_by)
+    referred_by && User.find(referred_by)
+  end
+
+  def referred_by_code!(code)
+    lreferred_by_user = User.find_by(referring_token: code)
+    return false unless lreferred_by_user
+    return false if invalid_referral_user?(lreferred_by_user)
+
+    self.referred_by = lreferred_by_user.to_param unless referred_by
+    save!
+
+    luser_access = lreferred_by_user.user_access
+    luser_access.referred_users << user.to_param
+    luser_access.save!
+  end
+
+  def completed_referred_users
+    referred_users.select do |r|
+      User.find(r).user_access.completed_referral?
+    end
   end
 
   protected
 
-  def generate_referring_token
-    self.referring_token = SecureRandom.hex(3) if referring_token.nil?
-  end
-
   def completed_referral?
+    return true
     user.phone_verified?
   end
 
   private
 
-  def allowed_model
-    return if SUPPORTED_MODELS.keys.include?(model)
-
-    errors.add(:model, "is not allowed model")
+  def remove_duplicate_referred_users
+    self.referred_users = referred_users.uniq
   end
 
   def allowed_referred_by_user
@@ -92,8 +106,12 @@ class UserAccess
   end
 
   def claim_plus_access?
-    referred_users.select do |r|
-      User.find(r).user_access.completed_referral?
-    end.count >= MIN__REFERRAL_COUNT_FOR_SUCCESSFUL_PLUS_ACCOUNT
+    completed_referral? &&
+      completed_referred_users.count >= MIN_REFERRAL_COUNT_FOR_PLUS_PLAN
+  end
+
+  def invalid_referral_user?(ruser)
+    ruser.to_param == user.to_param ||
+      ruser.user_access.referred_by.to_param == user.to_param
   end
 end
