@@ -78,7 +78,6 @@ class UserAccess
   protected
 
   def completed_referral?
-    return true
     user.phone_verified?
   end
 

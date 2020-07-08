@@ -10,8 +10,7 @@ class PhoneNumbersController < ApplicationController
 
   def create
     @user.update!(phone_number: params[:phone_number])
-    @user.generate_phone_pin
-    # @user.send_phone_pin
+    @user.generate_and_send_phone_pin!
 
     render json: { success: true }, status: :created
   end

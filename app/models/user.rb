@@ -37,6 +37,7 @@ class User
   field :phone_number,         type: String
   field :phone_pin,            type: String
   field :phone_verified,       type: Boolean, default: false
+  field :phone_verified_on,    type: Time
 
   field :referring_token, type: String, default: nil
 
@@ -88,26 +89,29 @@ class User
 
     self.phone_verified = true
     self.phone_pin = nil
+    self.phone_verified_on = Time.zone.now
 
     save!
     true
   end
 
-  def generate_phone_pin
+  def generate_and_send_phone_pin!
+    return unless phone_number
+
     self.phone_pin = rand(0..999_999).to_s.rjust(6, "0")
     save!
-  end
 
-  def send_phone_pin
-    twilio_client.messages.create(
-      to: phone_number,
-      from: ENV['TWILIO_PHONE_NUMBER'],
-      body: "Your PIN is #{phone_pin}. " \
-            "Use this to verify your number. - finsey."
-    )
+    send_phone_pin(phone_pin)
   end
 
   private
+
+  def send_phone_pin(pin)
+    return unless phone_number
+
+    TwilioClient.new.send_text(phone_number, "Your PIN is #{pin}. " \
+                                    "Use this to verify your number. - finsey.")
+  end
 
   def generate_referring_token
     self.referring_token = SecureRandom.hex(4) if referring_token.nil?
@@ -116,12 +120,5 @@ class User
   # Converts email to all lower-case.
   def downcase_email
     self.email = email.downcase
-  end
-
-  def twilio_client
-    Twilio::REST::Client.new(
-      ENV['TWILIO_ACCOUNT_SID'],
-      ENV['TWILIO_AUTH_TOKEN']
-    )
   end
 end
