@@ -113,7 +113,8 @@ class User
   def send_phone_pin(pin)
     return unless phone_number
 
-    TwilioClient.new.send_text(phone_number, "Your PIN is #{pin}. " \
+    full_number = country_code + phone_number
+    TwilioClient.new.send_text(full_number, "Your PIN is #{pin}. " \
                                     "Use this to verify your number. - finsey.")
   end
 
@@ -130,5 +131,9 @@ class User
   # Converts email to all lower-case.
   def downcase_email
     self.email = email.downcase
+  end
+
+  def country_code
+    "+91"
   end
 end

@@ -46,6 +46,7 @@ class UserAccess
 
   def claim_plus_access!
     return false unless claim_plus_access?
+    return false unless plan == :free
 
     self.plan = :plus
     self.plan_updated_at = Time.zone.today
