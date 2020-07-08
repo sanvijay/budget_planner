@@ -43,6 +43,29 @@ RSpec.describe User, type: :model do
       end
     end
 
+    it "accepts nil phone_number" do
+      user.phone_number = nil
+      expect(user).to be_valid
+    end
+
+    it "accepts valid format of phone" do
+      valid_numbers = %w[+919999999999 9999999999]
+
+      valid_numbers.each do |valid_number|
+        user.phone_number = valid_number
+        expect(user).to be_valid
+      end
+    end
+
+    it "does not allow invalid format of phone" do
+      invalid_numbers = %w[+91999999999 999999999 abc (+91)9999999999]
+
+      invalid_numbers.each do |invalid_number|
+        user.phone_number = invalid_number
+        expect(user).not_to be_valid
+      end
+    end
+
     it "does not allow duplicate user with same email" do
       duplicate_user = user.dup
       duplicate_user.email = user.email.upcase
@@ -77,6 +100,57 @@ RSpec.describe User, type: :model do
     it "creates token before saving user" do
       user.save!
       expect(user.referring_token).not_to be_nil
+    end
+  end
+
+  describe "#verify_phone" do
+    it "does not verify phone_number if phone_number is nil" do
+      user.phone_number = nil
+      user.phone_pin = "123"
+      user.save!
+
+      expect(user.verify_phone("123")).to be_falsey
+      expect(user.phone_verified).to be_falsey
+    end
+
+    it "does not verify phone_number if pin does not match" do
+      user.phone_number = "9999999999"
+      user.phone_pin = "123"
+      user.save!
+
+      expect(user.verify_phone("1234")).to be_falsey
+      expect(user.phone_verified).to be_falsey
+    end
+
+    it "verifies the phone_number if pin the pin match" do
+      user.phone_number = "9999999999"
+      user.phone_pin = "123"
+      user.save!
+
+      user.verify_phone("123")
+
+      expect(user.phone_verified).to be_truthy
+      expect(user.phone_pin).to be_nil
+      expect(user.phone_verified_on).not_to be_nil
+    end
+  end
+
+  describe "generate_and_send_phone_pin!" do
+    it "does not generates the pin when no number is given" do
+      user.phone_number = nil
+      user.save!
+
+      user.generate_and_send_phone_pin!
+      expect(user.phone_pin).to be_nil
+    end
+
+    it "generates and sends sms when number is given" do
+      user.phone_number = "9999999999"
+      user.save!
+
+      expect(user).to receive(:send_phone_pin).and_return(nil)
+      user.generate_and_send_phone_pin!
+      expect(user.phone_pin).to match(/\A\d{6}\z/)
     end
   end
 

@@ -65,11 +65,15 @@ class User
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: { case_sensitive: false }
 
-  validates :phone_number, uniqueness: { allow_blank: true }
+  VALID_PHONE_REGEX = /\A\d{10}\z/.freeze
+  validates :phone_number, allow_nil: true, uniqueness: true,
+                           format: { with: VALID_PHONE_REGEX }
+
   validates :referring_token, presence: true,
                               uniqueness: { case_sensitive: true }
 
   before_validation :generate_referring_token
+  before_validation :remove_phone_number_extension
   before_save :downcase_email
 
   def self.primary_key
@@ -85,7 +89,7 @@ class User
   end
 
   def verify_phone(entered_pin)
-    return false unless phone_pin == entered_pin
+    return false unless phone_number && phone_pin == entered_pin
 
     self.phone_verified = true
     self.phone_pin = nil
@@ -111,6 +115,12 @@ class User
 
     TwilioClient.new.send_text(phone_number, "Your PIN is #{pin}. " \
                                     "Use this to verify your number. - finsey.")
+  end
+
+  def remove_phone_number_extension
+    return unless phone_number
+
+    phone_number.sub!(/^\+91/, "")
   end
 
   def generate_referring_token
